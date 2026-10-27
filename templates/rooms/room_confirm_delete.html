@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     DELETE ROOM CONFIRMATION
+     XÁC NHẬN XÓA PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <h3 class="text-danger mb-3">
+            <i class="bi bi-exclamation-triangle"></i>
+            Delete Room
+        </h3>
+
+        <!-- Protected booking history must remain intact.
+             Lịch sử booking được PROTECT phải được giữ nguyên. -->
+        <div class="alert alert-warning">
+
+            <strong>Warning:</strong>
+
+            A room that already has booking or related history
+            cannot be deleted because those records are protected.
+
+        </div>
+
+        <p>
+            Are you sure you want to delete
+            <strong>Room {{ room.room_number }}</strong>?
+        </p>
+
+        <p class="text-muted">
+            This action should only be used for rooms that were
+            created incorrectly and have no protected booking history.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <!-- Submit deletion using POST.
+                 Gửi yêu cầu xóa bằng POST. -->
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                <i class="bi bi-trash"></i>
+                Yes, Delete
+            </button>
+
+            <a
+                href="{% url 'room_list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

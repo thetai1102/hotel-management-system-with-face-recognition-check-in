@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="login-wrapper">
+    <div class="card login-card">
+        <div class="card-header bg-dark text-white text-center">
+            <h4 class="mb-0">
+                <i class="bi bi-building"></i> Hotel Management Login
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Username or password is incorrect.
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        class="form-control" 
+                        placeholder="Enter username"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        class="form-control" 
+                        placeholder="Enter password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

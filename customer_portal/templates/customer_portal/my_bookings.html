@@ -1,0 +1,242 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}My Bookings - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Guest Bookings
+    </p>
+
+    <h1>
+        My Bookings
+    </h1>
+
+    <p>
+        View your submitted reservations, stay period,
+        current booking status, and total price.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     BOOKING LIST
+     DANH SÁCH BOOKING
+     ======================================================== -->
+
+<section class="room-list-section">
+
+
+    <!-- Display Django messages.
+         Hiển thị thông báo Django. -->
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="message-box">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    {% if bookings %}
+
+        <div class="booking-table-wrapper">
+
+            <table class="booking-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Room</th>
+                        <th>Room Type</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Status</th>
+                        <th>Total Price</th>
+                        <th>Submitted</th>
+                        <th>Room</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <!-- Display room number explicitly instead of
+                                 depending on Room.__str__().
+                                 Hiển thị trực tiếp số phòng thay vì
+                                 phụ thuộc Room.__str__(). -->
+                            <td>
+                                Room {{ booking.room.room_number }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.room.room_type.name }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                            </td>
+
+
+                            <!-- Display CustomerBooking status.
+                                 Hiển thị trạng thái CustomerBooking. -->
+                            <td>
+
+                                {% if booking.status == 'pending' %}
+
+                                    <span class="booking-status status-pending">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% elif booking.status == 'confirmed' %}
+
+                                    <span class="booking-status status-confirmed">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% elif booking.status == 'checked_in' %}
+
+                                    <span class="booking-status status-checked-in">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% elif booking.status == 'checked_out' %}
+
+                                    <span class="booking-status status-checked-out">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% elif booking.status == 'cancelled' %}
+
+                                    <span class="booking-status status-cancelled">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="booking-status">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ booking.total_price|floatformat:2 }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.created_at|date:"Y-m-d H:i" }}
+                            </td>
+
+
+                            <td>
+
+                                <!-- Customer can review the booked room,
+                                     but operational check-in/checkout
+                                     remains a staff responsibility.
+                                     Customer có thể xem lại phòng,
+                                     nhưng check-in/checkout nghiệp vụ
+                                     vẫn do staff xử lý. -->
+                                <a
+                                    href="{% url 'customer_portal:customer_room_detail' booking.room.id %}"
+                                    class="text-link"
+                                >
+                                    View Room
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            class="message-box"
+            style="margin-top: 30px;"
+        >
+            <strong>Booking process:</strong>
+            Pending bookings must first be confirmed by hotel staff.
+            Face verification check-in and checkout are processed
+            by authorized hotel staff.
+        </div>
+
+
+    {% else %}
+
+        <p class="empty-text">
+            You have not made any bookings yet.
+        </p>
+
+    {% endif %}
+
+
+    <!-- ====================================================
+         PAGE ACTIONS
+         CÁC THAO TÁC TRANG
+         ==================================================== -->
+
+    <div
+        style="
+            text-align: center;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        "
+    >
+
+        <a
+            href="{% url 'customer_portal:customer_room_list' %}"
+            class="text-link"
+        >
+            Browse Rooms
+        </a>
+
+        <a
+            href="{% url 'customer_portal:customer_dashboard' %}"
+            class="text-link"
+        >
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

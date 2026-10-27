@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="mb-1">
+            Room Types
+        </h2>
+
+        <p class="text-muted mb-0">
+            Manage room categories, prices, and guest capacity.
+        </p>
+
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'room_list' %}"
+            class="btn btn-secondary"
+        >
+            <i class="bi bi-door-open"></i>
+            Rooms
+        </a>
+
+        <a
+            href="{% url 'room_type_create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-circle"></i>
+            Add Room Type
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     ROOM TYPE LIST
+     DANH SÁCH LOẠI PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            Room Type List
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if room_types %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Name</th>
+                            <th>Price / Night</th>
+                            <th>Capacity</th>
+                            <th>Rooms Using Type</th>
+                            <th>Description</th>
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for room_type in room_types %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ room_type.name }}
+                                    </strong>
+                                </td>
+
+
+                                <td>
+                                    {{ room_type.price_per_night }}
+                                </td>
+
+
+                                <td>
+                                    {{ room_type.capacity }}
+                                </td>
+
+
+                                <!-- Show how many rooms currently reference
+                                     this RoomType through the default
+                                     reverse relation room_set.
+                                     Hiển thị số phòng hiện đang tham chiếu
+                                     RoomType qua quan hệ ngược room_set. -->
+                                <td>
+
+                                    {% with room_count=room_type.room_set.count %}
+
+                                        {% if room_count > 0 %}
+
+                                            <span class="badge bg-info text-dark">
+                                                {{ room_count }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                0
+                                            </span>
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ room_type.description|default:"-" }}
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'room_type_update' room_type.pk %}"
+                                        class="btn btn-sm btn-warning"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+
+                                    <a
+                                        href="{% url 'room_type_delete' room_type.pk %}"
+                                        class="btn btn-sm btn-danger"
+                                    >
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No room types found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- A RoomType that is still used by a Room cannot be deleted.
+     RoomType đang được Room sử dụng sẽ không thể xóa do PROTECT. -->
+<div class="alert alert-info mt-3 mb-0">
+
+    <strong>Note:</strong>
+
+    A room type cannot be deleted while one or more rooms
+    are still assigned to it.
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}About - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     ABOUT PAGE HERO
+     PHẦN GIỚI THIỆU CHÍNH
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        About the Hotel
+    </p>
+
+    <h1>
+        A modern hotel system for a smoother guest journey.
+    </h1>
+
+    <p>
+        Maison Lumière is a demonstration hotel website created
+        for the Hotel Management System with Face Recognition
+        Check-in project.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     SYSTEM OVERVIEW
+     TỔNG QUAN HỆ THỐNG
+     ======================================================== -->
+
+<section class="intro-section">
+
+    <h2>
+        Hospitality supported by technology.
+    </h2>
+
+    <p>
+        The system supports the hotel workflow from guest
+        registration and Customer Portal booking requests
+        to receptionist check-in, face verification,
+        check-out, payment recording, invoice information,
+        and reporting.
+    </p>
+
+    <p>
+        During check-in, the face verification feature compares
+        the guest's stored reference image with a current face
+        image provided at the hotel. It is designed as a supporting
+        verification tool and does not replace receptionist judgment.
+    </p>
+
+    <!-- The current project performs face verification only.
+         It does not implement liveness or anti-spoofing detection. -->
+    <!-- Project hiện chỉ thực hiện Face Verification.
+         Hệ thống chưa triển khai liveness hoặc anti-spoofing detection. -->
+
+    <p class="text-muted">
+        The current demonstration performs face verification
+        between two images. Liveness and anti-spoofing detection
+        are outside the scope of the current implementation.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     MAIN FEATURES
+     CÁC CHỨC NĂNG CHÍNH
+     ======================================================== -->
+
+<section class="feature-grid">
+
+    <div class="feature-card">
+
+        <p class="eyebrow">
+            Booking
+        </p>
+
+        <h3>
+            Customer Portal Booking
+        </h3>
+
+        <p>
+            Guests can register an account, maintain profile
+            information, browse rooms, and submit booking
+            requests through the Customer Portal.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <p class="eyebrow">
+            Verification
+        </p>
+
+        <h3>
+            Face Verification Support
+        </h3>
+
+        <p>
+            Receptionists can compare a stored reference face
+            image with the guest's current face image to support
+            identity verification during check-in.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <p class="eyebrow">
+            Management
+        </p>
+
+        <h3>
+            Staff Dashboard
+        </h3>
+
+        <p>
+            Authorized staff can manage rooms, customers,
+            bookings, face check-in, check-out, recorded
+            payments, and operational reports.
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

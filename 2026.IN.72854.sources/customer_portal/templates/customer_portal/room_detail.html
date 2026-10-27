@@ -1,0 +1,131 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Room Detail - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Room Detail
+    </p>
+
+    <h1>
+        Room {{ room.room_number }}
+    </h1>
+
+    <p>
+        Review the room information before selecting
+        your intended check-in and check-out period.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     ROOM INFORMATION
+     THÔNG TIN PHÒNG
+     ======================================================== -->
+
+<section class="intro-section">
+
+    <p class="eyebrow">
+        {{ room.room_type.name }}
+    </p>
+
+    <h2>
+        Room {{ room.room_number }}
+    </h2>
+
+
+    <p>
+        <strong>Room Type:</strong>
+        {{ room.room_type.name }}
+    </p>
+
+
+    <p>
+        <strong>Room Number:</strong>
+        {{ room.room_number }}
+    </p>
+
+
+    <p>
+        <strong>Floor:</strong>
+        {{ room.floor }}
+    </p>
+
+
+    <!-- Display the current operational status only.
+         Chỉ hiển thị trạng thái vận hành hiện tại của phòng. -->
+    <p>
+        <strong>Current Status:</strong>
+        {{ room.get_status_display }}
+    </p>
+
+
+    <p>
+        <strong>Price per Night:</strong>
+        {{ room.room_type.price_per_night|floatformat:2 }}
+    </p>
+
+
+    <!-- Explain that booking availability is date-based.
+         Giải thích khả năng đặt phòng được kiểm tra theo thời gian. -->
+    <div class="message-box">
+
+        <strong>Availability:</strong>
+
+        The current room status does not necessarily determine
+        whether the room can be reserved for a future stay.
+        Availability will be checked against existing bookings
+        when you submit your selected check-in and check-out time.
+
+    </div>
+
+
+    <!-- ====================================================
+         BOOKING ACTION
+         THAO TÁC ĐẶT PHÒNG
+         ==================================================== -->
+
+    <p style="margin-top: 30px;">
+
+        <!-- Allow the customer to choose dates before the system
+             performs the final availability check.
+             Cho phép customer chọn ngày trước khi hệ thống
+             kiểm tra khả dụng cuối cùng. -->
+        <a
+            href="{% url 'customer_portal:customer_book_room' room.id %}"
+            class="primary-btn"
+        >
+            Book This Room
+        </a>
+
+    </p>
+
+
+    <!-- ====================================================
+         BACK NAVIGATION
+         ĐIỀU HƯỚNG QUAY LẠI
+         ==================================================== -->
+
+    <p>
+
+        <a
+            href="{% url 'customer_portal:customer_room_list' %}"
+            class="text-link"
+        >
+            Back to Rooms
+        </a>
+
+    </p>
+
+</section>
+
+{% endblock %}

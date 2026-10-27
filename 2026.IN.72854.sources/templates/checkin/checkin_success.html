@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     CHECK-IN SUCCESS
+     CHECK-IN THÀNH CÔNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body text-center p-5">
+
+        <i
+            class="bi bi-check-circle-fill text-success"
+            style="font-size: 70px;"
+        ></i>
+
+        <h2 class="mt-3 text-success">
+            Check-in Successful
+        </h2>
+
+        <p class="text-muted">
+            Face verification completed successfully
+            and the check-in record has been saved.
+        </p>
+
+        <hr>
+
+
+        <!-- =================================================
+             VERIFIED FACE IMAGE
+             ẢNH KHUÔN MẶT ĐÃ XÁC MINH
+             ================================================= -->
+
+        {% if checkin.verified_image %}
+
+            <div class="mb-4">
+
+                <p class="fw-semibold mb-2">
+                    Verified Face Image
+                </p>
+
+                <img
+                    src="{{ checkin.verified_image.url }}"
+                    alt="Verified face image"
+                    class="rounded border"
+                    style="
+                        width: 160px;
+                        height: 160px;
+                        object-fit: cover;
+                    "
+                >
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             CUSTOMER + BOOKING INFORMATION
+             THÔNG TIN KHÁCH + BOOKING
+             ================================================= -->
+
+        <div class="row mt-4 text-start">
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Customer Information
+                </h5>
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Customer</th>
+                        <td>
+                            {{ checkin.customer.full_name }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Phone</th>
+                        <td>
+                            {{ checkin.customer.phone }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td>
+                            {% if checkin.customer.email %}
+                                {{ checkin.customer.email }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>ID Card / Passport</th>
+                        <td>
+                            {{ checkin.customer.id_card_number }}
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Booking Information
+                </h5>
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Booking Code</th>
+                        <td>
+                            {{ checkin.booking.booking_code }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Room</th>
+                        <td>
+                            {{ checkin.booking.room.room_number }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Check-in Date</th>
+                        <td>
+                            {{ checkin.booking.check_in_date|date:"Y-m-d" }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Check-out Date</th>
+                        <td>
+                            {{ checkin.booking.check_out_date|date:"Y-m-d" }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge bg-success">
+                                {{ checkin.booking.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHECK-IN RECORD
+             BẢN GHI CHECK-IN
+             ================================================= -->
+
+        <div class="row mt-4 text-start">
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Verification Information
+                </h5>
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Method</th>
+                        <td>
+                            {{ checkin.get_method_display }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Face Verified</th>
+                        <td>
+
+                            {% if checkin.face_verified %}
+
+                                <span class="badge bg-success">
+                                    Verified
+                                </span>
+
+                            {% elif checkin.manual_verified %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Manual Verification
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Not Verified
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Check-in Record
+                </h5>
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Actual Check-in Time</th>
+                        <td>
+                            {{ checkin.check_in_time|date:"Y-m-d H:i" }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Processed By</th>
+                        <td>
+
+                            {% if checkin.staff %}
+                                {{ checkin.staff.username }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTION BUTTONS
+             CÁC NÚT THAO TÁC
+             ================================================= -->
+
+        <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
+
+            <!-- Start another Face Check-in.
+                 Thực hiện Face Check-in khác. -->
+            <a
+                href="{% url 'face_checkin' %}"
+                class="btn btn-warning"
+            >
+                <i class="bi bi-camera"></i>
+                New Face Check-in
+            </a>
+
+            <!-- Open the correct booking using bookings namespace.
+                 Mở booking bằng namespace bookings chính xác. -->
+            <a
+                href="{% url 'bookings:booking_detail' checkin.booking.pk %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-calendar-check"></i>
+                View Booking
+            </a>
+
+            <a
+                href="{% url 'checkin_history' %}"
+                class="btn btn-outline-success"
+            >
+                <i class="bi bi-clock-history"></i>
+                Check-in History
+            </a>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

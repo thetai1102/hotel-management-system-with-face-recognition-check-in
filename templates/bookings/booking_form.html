@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            {{ title }}
+        </h2>
+
+        <p class="text-muted mb-0">
+            Create or update a hotel booking.
+        </p>
+    </div>
+
+    <!-- Return to the booking list using the correct namespace.
+         Quay lại danh sách booking bằng namespace chính xác. -->
+    <a
+        href="{% url 'bookings:booking_list' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+
+<!-- ========================================================
+     BOOKING FORM
+     FORM BOOKING
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors such as
+                 overlapping room bookings.
+                 Hiển thị lỗi validation chung như đặt phòng
+                 bị trùng khoảng thời gian. -->
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            <i class="bi bi-exclamation-triangle"></i>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row">
+
+                <!-- =========================================
+                     CUSTOMER
+                     KHÁCH HÀNG
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.customer.id_for_label }}"
+                        class="form-label"
+                    >
+                        Customer
+                    </label>
+
+                    {{ form.customer }}
+
+                    {% if form.customer.errors %}
+
+                        <div class="text-danger small mt-1">
+
+                            {% for error in form.customer.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     ROOM
+                     PHÒNG
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.room.id_for_label }}"
+                        class="form-label"
+                    >
+                        Room
+                    </label>
+
+                    {{ form.room }}
+
+                    {% if form.room.errors %}
+
+                        <div class="text-danger small mt-1">
+
+                            {% for error in form.room.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                    <!-- Room availability is validated using the selected dates.
+                         Tình trạng phòng được kiểm tra theo khoảng ngày đã chọn. -->
+                    <div class="form-text">
+                        Rooms under maintenance are excluded.
+                        Availability is checked against the selected
+                        check-in and check-out dates.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     CHECK-IN DATE
+                     NGÀY CHECK-IN
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.check_in_date.id_for_label }}"
+                        class="form-label"
+                    >
+                        Check-in Date
+                    </label>
+
+                    {{ form.check_in_date }}
+
+                    {% if form.check_in_date.errors %}
+
+                        <div class="text-danger small mt-1">
+
+                            {% for error in form.check_in_date.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     CHECK-OUT DATE
+                     NGÀY CHECK-OUT
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.check_out_date.id_for_label }}"
+                        class="form-label"
+                    >
+                        Check-out Date
+                    </label>
+
+                    {{ form.check_out_date }}
+
+                    {% if form.check_out_date.errors %}
+
+                        <div class="text-danger small mt-1">
+
+                            {% for error in form.check_out_date.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                    <div class="form-text">
+                        Check-out date must be later than check-in date.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     BOOKING STATUS
+                     TRẠNG THÁI BOOKING
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.status.id_for_label }}"
+                        class="form-label"
+                    >
+                        Status
+                    </label>
+
+                    {{ form.status }}
+
+                    {% if form.status.errors %}
+
+                        <div class="text-danger small mt-1">
+
+                            {% for error in form.status.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTION BUTTONS
+                 CÁC NÚT THAO TÁC
+                 ================================================= -->
+
+            <div class="mt-2">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-save"></i>
+                    Save
+                </button>
+
+                <a
+                    href="{% url 'bookings:booking_list' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

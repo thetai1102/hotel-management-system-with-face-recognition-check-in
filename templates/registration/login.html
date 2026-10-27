@@ -1,0 +1,154 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}
+Staff Login - Maison Lumière
+{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     STAFF LOGIN PAGE
+     TRANG ĐĂNG NHẬP NHÂN VIÊN
+     ======================================================== -->
+
+<section class="auth-page">
+
+    <div class="auth-card">
+
+        <p class="eyebrow">
+            Staff Area
+        </p>
+
+        <h1>
+            Staff Login
+        </h1>
+
+        <p class="auth-intro">
+            This area is only for hotel staff,
+            including Admin and Receptionist users.
+        </p>
+
+
+        <form
+            method="post"
+            class="luxury-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display authentication and role validation errors.
+                 Hiển thị lỗi xác thực và kiểm tra role. -->
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 USERNAME
+                 TÊN ĐĂNG NHẬP
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.username.id_for_label }}">
+                    Username
+                </label>
+
+                {{ form.username }}
+
+                {% if form.username.errors %}
+
+                    <div class="text-danger small mt-1">
+
+                        {% for error in form.username.errors %}
+                            <div>
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD
+                 MẬT KHẨU
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.password.id_for_label }}">
+                    Password
+                </label>
+
+                {{ form.password }}
+
+                {% if form.password.errors %}
+
+                    <div class="text-danger small mt-1">
+
+                        {% for error in form.password.errors %}
+                            <div>
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Preserve the requested destination after login.
+                 Giữ lại trang đích được yêu cầu sau khi đăng nhập. -->
+            {% if next %}
+
+                <input
+                    type="hidden"
+                    name="next"
+                    value="{{ next }}"
+                >
+
+            {% endif %}
+
+
+            <button
+                type="submit"
+                class="form-submit-btn"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <p class="auth-bottom-text">
+
+            <a href="{% url 'hotel_site:home' %}">
+                Back to hotel website
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

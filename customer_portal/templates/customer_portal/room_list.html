@@ -1,0 +1,139 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Guest Rooms - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Guest Rooms
+    </p>
+
+    <h1>
+        Browse Rooms
+    </h1>
+
+    <p>
+        Browse hotel rooms and select a room for your intended stay.
+        Availability for your specific dates and times is checked
+        when you submit the booking request.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     ROOM LIST
+     DANH SÁCH PHÒNG
+     ======================================================== -->
+
+<section class="room-list-section">
+
+    {% if rooms %}
+
+        <div class="room-list">
+
+            {% for room in rooms %}
+
+                <div class="room-list-card">
+
+                    <!-- Room image placeholder.
+                         Vị trí hiển thị hình ảnh phòng. -->
+                    <div class="room-image-placeholder">
+
+                        <span>
+                            Room {{ room.room_number }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="room-list-content">
+
+                        <p class="eyebrow">
+                            {{ room.room_type.name }}
+                        </p>
+
+                        <h2>
+                            Room {{ room.room_number }}
+                        </h2>
+
+
+                        <p>
+                            <strong>Floor:</strong>
+                            {{ room.floor }}
+                        </p>
+
+
+                        <!-- This is the room's current operational status,
+                             not date-range booking availability.
+                             Đây là trạng thái vận hành hiện tại của phòng,
+                             không phải tình trạng khả dụng theo khoảng ngày đặt. -->
+                        <p>
+
+                            <strong>Current Status:</strong>
+
+                            {{ room.get_status_display }}
+
+                        </p>
+
+
+                        <p>
+                            <strong>Price:</strong>
+                            {{ room.room_type.price_per_night|floatformat:2 }}
+                            per night
+                        </p>
+
+
+                        <div class="room-actions">
+
+                            <!-- Open room detail before selecting booking dates.
+                                 Mở chi tiết phòng trước khi chọn ngày đặt. -->
+                            <a
+                                href="{% url 'customer_portal:customer_room_detail' room.id %}"
+                                class="primary-btn"
+                            >
+                                View Details
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Explain date-based room availability.
+             Giải thích cơ chế kiểm tra phòng theo ngày. -->
+        <div
+            class="message-box"
+            style="margin-top: 35px;"
+        >
+            <strong>Availability note:</strong>
+            A room's current status does not necessarily determine
+            whether it can be booked for a future stay.
+            The system checks existing bookings against your selected
+            check-in and check-out period before accepting a request.
+        </div>
+
+    {% else %}
+
+        <p class="empty-text">
+            No rooms are currently available for booking requests.
+        </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

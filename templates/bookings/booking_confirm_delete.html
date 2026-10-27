@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     DELETE BOOKING CONFIRMATION
+     XÁC NHẬN XÓA BOOKING
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <h3 class="text-danger mb-3">
+            <i class="bi bi-exclamation-triangle"></i>
+            Delete Booking
+        </h3>
+
+        <div class="alert alert-warning">
+
+            <!-- Historical records should not be removed accidentally.
+                 Không nên vô tình xóa các bản ghi đã có lịch sử nghiệp vụ. -->
+            <strong>Warning:</strong>
+            A booking that already has check-in, checkout,
+            or payment history may not be deleted.
+
+        </div>
+
+        <p>
+            Are you sure you want to delete booking
+            <strong>
+                {{ booking.booking_code }}
+            </strong>
+            for
+            <strong>
+                {{ booking.customer.full_name }}
+            </strong>
+            in room
+            <strong>
+                {{ booking.room.room_number }}
+            </strong>?
+        </p>
+
+        <p class="text-muted">
+            This action should only be used for bookings
+            that were created incorrectly and have no historical records.
+        </p>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <!-- Submit deletion using POST.
+                 Gửi yêu cầu xóa bằng phương thức POST. -->
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                <i class="bi bi-trash"></i>
+                Yes, Delete
+            </button>
+
+            <!-- Return to booking detail using the correct namespace.
+                 Quay lại chi tiết booking bằng namespace chính xác. -->
+            <a
+                href="{% url 'bookings:booking_detail' booking.pk %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

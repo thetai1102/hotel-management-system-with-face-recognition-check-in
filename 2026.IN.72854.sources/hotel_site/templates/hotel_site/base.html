@@ -1,0 +1,346 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}Maison Lumière{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'hotel_site/css/public.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================================
+     PUBLIC HEADER
+     HEADER WEBSITE CÔNG KHAI
+     ======================================================== -->
+
+<header class="site-header">
+
+    <!-- Hotel brand.
+         Thương hiệu khách sạn. -->
+    <div class="brand">
+
+        <a href="{% url 'hotel_site:home' %}">
+            Maison Lumière
+        </a>
+
+    </div>
+
+
+    <!-- ====================================================
+         MAIN NAVIGATION
+         THANH ĐIỀU HƯỚNG CHÍNH
+         ==================================================== -->
+
+    <nav class="main-nav">
+
+        <a href="{% url 'hotel_site:home' %}">
+            Home
+        </a>
+
+
+        <!-- Logged-in customers should use the Customer Portal
+             room list so they can proceed directly to booking.
+             Customer đã đăng nhập nên dùng danh sách phòng của
+             Customer Portal để có thể đặt phòng trực tiếp. -->
+        {% if user.is_authenticated %}
+
+            {% if user.customer_profile %}
+
+                <a href="{% url 'customer_portal:customer_room_list' %}">
+                    Rooms
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'hotel_site:public_rooms' %}">
+                    Rooms
+                </a>
+
+            {% endif %}
+
+        {% else %}
+
+            <a href="{% url 'hotel_site:public_rooms' %}">
+                Rooms
+            </a>
+
+        {% endif %}
+
+
+        <a href="{% url 'hotel_site:about' %}">
+            About
+        </a>
+
+        <a href="{% url 'hotel_site:contact' %}">
+            Contact
+        </a>
+
+    </nav>
+
+
+    <!-- ====================================================
+         ACCOUNT ACTIONS
+         CÁC THAO TÁC TÀI KHOẢN
+         ==================================================== -->
+
+    <div class="header-actions">
+
+
+        {% if user.is_authenticated %}
+
+
+            <!-- =============================================
+                 STAFF ACCOUNT
+                 TÀI KHOẢN NHÂN VIÊN
+                 ============================================= -->
+
+            {% if is_admin_role or is_receptionist_role %}
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="link-btn"
+                >
+                    Staff Dashboard
+                </a>
+
+
+                <!-- Staff logout uses POST for security.
+                     Đăng xuất staff sử dụng POST để bảo mật. -->
+                <form
+                    method="post"
+                    action="{% url 'logout' %}"
+                    style="display: inline;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="staff-link"
+                        style="
+                            border: none;
+                            background: none;
+                            cursor: pointer;
+                            font: inherit;
+                        "
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+
+            <!-- =============================================
+                 CUSTOMER ACCOUNT
+                 TÀI KHOẢN KHÁCH HÀNG
+                 ============================================= -->
+
+            {% elif user.customer_profile %}
+
+                <a
+                    href="{% url 'customer_portal:customer_dashboard' %}"
+                    class="link-btn"
+                >
+                    My Account
+                </a>
+
+
+                <a
+                    href="{% url 'customer_portal:customer_my_bookings' %}"
+                    class="link-btn"
+                >
+                    My Bookings
+                </a>
+
+
+                <a
+                    href="{% url 'customer_portal:customer_profile' %}"
+                    class="outline-btn"
+                >
+                    Profile
+                </a>
+
+
+                <!-- Customer logout is submitted using POST.
+                     Đăng xuất customer được gửi bằng POST. -->
+                <form
+                    method="post"
+                    action="{% url 'customer_portal:customer_logout' %}"
+                    style="display: inline;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="staff-link"
+                        style="
+                            border: none;
+                            background: none;
+                            cursor: pointer;
+                            font: inherit;
+                        "
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+
+            <!-- =============================================
+                 OTHER AUTHENTICATED ACCOUNT
+                 TÀI KHOẢN ĐÃ ĐĂNG NHẬP KHÁC
+                 ============================================= -->
+
+            {% else %}
+
+                <a
+                    href="{% url 'hotel_site:home' %}"
+                    class="link-btn"
+                >
+                    Home
+                </a>
+
+
+                <form
+                    method="post"
+                    action="{% url 'logout' %}"
+                    style="display: inline;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="staff-link"
+                        style="
+                            border: none;
+                            background: none;
+                            cursor: pointer;
+                            font: inherit;
+                        "
+                    >
+                        Logout
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+        {% else %}
+
+
+            <!-- =============================================
+                 NOT AUTHENTICATED
+                 CHƯA ĐĂNG NHẬP
+                 ============================================= -->
+
+            <a
+                href="{% url 'customer_portal:customer_login' %}"
+                class="link-btn"
+            >
+                Guest Login
+            </a>
+
+
+            <a
+                href="{% url 'customer_portal:customer_register' %}"
+                class="outline-btn"
+            >
+                Register
+            </a>
+
+
+            <!-- Use Django URL reversing instead of hard-coded /login/.
+                 Dùng Django URL reverse thay vì hard-code /login/. -->
+            <a
+                href="{% url 'login' %}"
+                class="staff-link"
+            >
+                Staff
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</header>
+
+
+<!-- ========================================================
+     PAGE CONTENT
+     NỘI DUNG TRANG
+     ======================================================== -->
+
+<main>
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<!-- ========================================================
+     PUBLIC FOOTER
+     FOOTER WEBSITE
+     ======================================================== -->
+
+<footer class="site-footer">
+
+    <div>
+
+        <h3>
+            Maison Lumière
+        </h3>
+
+        <p>
+            A modern hotel experience with online booking
+            and face recognition-supported check-in.
+        </p>
+
+    </div>
+
+
+    <div>
+
+        <p>
+            Rzeszow, Poland
+        </p>
+
+        <p>
+            Email: contact@maisonlumiere.local
+        </p>
+
+        <p>
+            Phone: +48 000 000 000
+        </p>
+
+    </div>
+
+</footer>
+
+
+</body>
+
+</html>

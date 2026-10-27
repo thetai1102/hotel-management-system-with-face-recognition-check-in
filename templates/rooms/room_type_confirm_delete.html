@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     DELETE ROOM TYPE CONFIRMATION
+     XÁC NHẬN XÓA LOẠI PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <h3 class="text-danger mb-3">
+            <i class="bi bi-exclamation-triangle"></i>
+            Delete Room Type
+        </h3>
+
+        <!-- A RoomType referenced by any Room is protected.
+             RoomType đang được Room sử dụng sẽ được PROTECT. -->
+        <div class="alert alert-warning">
+
+            <strong>Warning:</strong>
+
+            A room type that is currently used by one or more rooms
+            cannot be deleted.
+
+        </div>
+
+        <p>
+            Are you sure you want to delete room type
+            <strong>{{ room_type.name }}</strong>?
+        </p>
+
+        <p class="text-muted">
+            This action should only be used for room types
+            that are no longer assigned to any room.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <!-- Submit deletion using POST.
+                 Gửi yêu cầu xóa bằng POST. -->
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                <i class="bi bi-trash"></i>
+                Yes, Delete
+            </button>
+
+            <a
+                href="{% url 'room_type_list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,332 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Book Room - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     ROOM BOOKING PAGE
+     TRANG ĐẶT PHÒNG
+     ======================================================== -->
+
+<section class="auth-page">
+
+    <div class="auth-card wide-card">
+
+        <p class="eyebrow">
+            Room Booking
+        </p>
+
+        <h1>
+            Book Room {{ room.room_number }}
+        </h1>
+
+        <p class="auth-intro">
+            Confirm your information and select the intended
+            check-in and check-out time.
+            Identity and selfie images can be uploaded here
+            or reused from your customer profile when available.
+        </p>
+
+
+        <!-- ====================================================
+             ROOM SUMMARY
+             TÓM TẮT THÔNG TIN PHÒNG
+             ==================================================== -->
+
+        <div class="message-box">
+
+            <strong>
+                Room {{ room.room_number }}
+            </strong>
+
+            {% if room.room_type %}
+                — {{ room.room_type.name }}
+            {% endif %}
+
+            {% if room.room_type.price_per_night %}
+                — {{ room.room_type.price_per_night|floatformat:2 }}
+                per night
+            {% endif %}
+
+        </div>
+
+
+        <!-- ====================================================
+             DJANGO MESSAGES
+             THÔNG BÁO DJANGO
+             ==================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- ====================================================
+             BOOKING FORM
+             FORM ĐẶT PHÒNG
+             ==================================================== -->
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="luxury-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide errors such as room overlap.
+                 Hiển thị lỗi chung như phòng bị trùng lịch. -->
+            {% if form.non_field_errors %}
+
+                <div class="message-box">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 CUSTOMER INFORMATION
+                 THÔNG TIN KHÁCH HÀNG
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.full_name.id_for_label }}">
+                    Full name
+                </label>
+
+                {{ form.full_name }}
+
+                {% if form.full_name.errors %}
+                    {{ form.full_name.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.email.id_for_label }}">
+                    Email
+                </label>
+
+                {{ form.email }}
+
+                {% if form.email.errors %}
+                    {{ form.email.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.phone.id_for_label }}">
+                    Phone number
+                </label>
+
+                {{ form.phone }}
+
+                {% if form.phone.errors %}
+                    {{ form.phone.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.identity_number.id_for_label }}">
+                    Identity number
+                </label>
+
+                {{ form.identity_number }}
+
+                {% if form.identity_number.errors %}
+                    {{ form.identity_number.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.address.id_for_label }}">
+                    Address
+                </label>
+
+                {{ form.address }}
+
+                {% if form.address.errors %}
+                    {{ form.address.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 STAY PERIOD
+                 THỜI GIAN LƯU TRÚ
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.check_in_at.id_for_label }}">
+                    Check-in date and time
+                </label>
+
+                {{ form.check_in_at }}
+
+                {% if form.check_in_at.errors %}
+                    {{ form.check_in_at.errors }}
+                {% endif %}
+
+                <small>
+                    Check-in time cannot be in the past.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.check_out_at.id_for_label }}">
+                    Check-out date and time
+                </label>
+
+                {{ form.check_out_at }}
+
+                {% if form.check_out_at.errors %}
+                    {{ form.check_out_at.errors }}
+                {% endif %}
+
+                <small>
+                    Check-out must be later than check-in.
+                    The room must also be available for the selected period.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 IDENTITY DOCUMENT
+                 GIẤY TỜ TÙY THÂN
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.id_document_image.id_for_label }}">
+                    Identity document image
+                </label>
+
+                {{ form.id_document_image }}
+
+                {% if form.id_document_image.errors %}
+                    {{ form.id_document_image.errors }}
+                {% endif %}
+
+                <small>
+                    If an identity document is already stored in your
+                    profile, uploading another image is optional.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 REFERENCE SELFIE
+                 ẢNH SELFIE THAM CHIẾU
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.selfie_image.id_for_label }}">
+                    Selfie image
+                </label>
+
+                {{ form.selfie_image }}
+
+                {% if form.selfie_image.errors %}
+                    {{ form.selfie_image.errors }}
+                {% endif %}
+
+                <small>
+                    Use a clear front-facing selfie.
+                    This image may be used as the reference image
+                    during Online Face Check-in.
+                    If your profile already contains a selfie,
+                    uploading a new one is optional.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 CUSTOMER NOTE
+                 GHI CHÚ CỦA KHÁCH
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.note.id_for_label }}">
+                    Note
+                </label>
+
+                {{ form.note }}
+
+                {% if form.note.errors %}
+                    {{ form.note.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBMIT
+                 GỬI BOOKING
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="form-submit-btn"
+            >
+                Submit Booking
+            </button>
+
+        </form>
+
+
+        <p class="auth-bottom-text">
+
+            <a
+                href="{% url 'customer_portal:customer_room_detail' room.id %}"
+            >
+                Back to room detail
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

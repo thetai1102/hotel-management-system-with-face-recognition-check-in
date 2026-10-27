@@ -1,0 +1,319 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}
+Maison Lumière - Luxury Hotel
+{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     HERO SECTION
+     PHẦN HERO
+     ======================================================== -->
+
+<section class="hero-section">
+
+    <div class="hero-overlay">
+
+        <p class="eyebrow">
+            A Contemporary Hotel Experience
+        </p>
+
+        <h1>
+            Stay with elegance, check in with confidence.
+        </h1>
+
+        <p class="hero-text">
+            Maison Lumière combines online room booking,
+            guest profiles, and face recognition-supported
+            check-in for a modern hotel experience.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a
+                href="{% url 'hotel_site:public_rooms' %}"
+                class="primary-btn"
+            >
+                Explore Rooms
+            </a>
+
+            <a
+                href="{% url 'customer_portal:customer_register' %}"
+                class="secondary-btn"
+            >
+                Create Guest Account
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================
+     BOOKING STRIP
+     THANH ĐẶT PHÒNG
+     ======================================================== -->
+
+<section class="booking-strip">
+
+    <div>
+        <span>Arrival</span>
+        <strong>Select date after login</strong>
+    </div>
+
+    <div>
+        <span>Departure</span>
+        <strong>Select date after login</strong>
+    </div>
+
+    <div>
+        <span>Guests</span>
+        <strong>Personalized stay</strong>
+    </div>
+
+    <div>
+        <a href="{% url 'customer_portal:customer_login' %}">
+            Book Online
+        </a>
+    </div>
+
+</section>
+
+
+<!-- ========================================================
+     INTRODUCTION
+     GIỚI THIỆU
+     ======================================================== -->
+
+<section class="intro-section">
+
+    <p class="eyebrow">
+        Welcome
+    </p>
+
+    <h2>
+        A private hotel journey designed for comfort and efficiency.
+    </h2>
+
+    <p>
+        Guests can create an account, save personal information,
+        browse hotel rooms, and submit booking requests online.
+        Room availability for selected stay dates is checked
+        during the booking process.
+
+        Receptionists can manage arrivals, verify guests,
+        perform face recognition-supported check-in,
+        and complete check-out with payment status
+        and invoice information.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     SYSTEM FEATURES
+     CÁC CHỨC NĂNG HỆ THỐNG
+     ======================================================== -->
+
+<section class="feature-grid">
+
+    <div class="feature-card large-card">
+
+        <p class="eyebrow">
+            Guest Experience
+        </p>
+
+        <h3>
+            Online Booking
+        </h3>
+
+        <p>
+            Guests can browse rooms, create an account,
+            select stay dates, and submit booking requests
+            with identity document and selfie image upload.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <p class="eyebrow">
+            Smart Arrival
+        </p>
+
+        <h3>
+            Face Recognition Check-in
+        </h3>
+
+        <p>
+            The receptionist can compare the stored
+            guest reference image with the current face image
+            during check-in.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <p class="eyebrow">
+            Hotel Operation
+        </p>
+
+        <h3>
+            Staff Dashboard
+        </h3>
+
+        <p>
+            Admin and receptionist users can manage rooms,
+            bookings, check-in, check-out, payment records,
+            and reports.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================
+     FEATURED ROOMS
+     PHÒNG NỔI BẬT
+     ======================================================== -->
+
+<section class="rooms-preview">
+
+    <div class="section-heading">
+
+        <p class="eyebrow">
+            Rooms and Suites
+        </p>
+
+        <h2>
+            Designed for a calm and comfortable stay.
+        </h2>
+
+    </div>
+
+
+    <div class="room-cards">
+
+        {% for room in featured_rooms %}
+
+            <div class="room-card">
+
+                <div class="room-image-placeholder">
+                    <span>
+                        Room
+                    </span>
+                </div>
+
+                <div class="room-info">
+
+                    <h3>
+                        Room {{ room.room_number }}
+                    </h3>
+
+                    <p>
+                        {{ room.room_type.name }}
+                    </p>
+
+                    <p>
+                        {{ room.room_type.price_per_night }} / night
+                    </p>
+
+                    <!-- Current status is operational only.
+                         Trạng thái hiện tại chỉ là trạng thái vận hành. -->
+                    <p class="text-muted">
+                        Current status:
+                        {{ room.get_status_display }}
+                    </p>
+
+                    <a href="{% url 'hotel_site:public_rooms' %}">
+                        View details
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                No rooms have been added yet.
+                Please add rooms from the staff dashboard.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================
+     GUEST / STAFF ENTRY
+     LỐI VÀO CHO KHÁCH / NHÂN VIÊN
+     ======================================================== -->
+
+<section class="split-section">
+
+    <div>
+
+        <p class="eyebrow">
+            For Guests
+        </p>
+
+        <h2>
+            Create an account before your stay.
+        </h2>
+
+        <p>
+            Save your personal information once,
+            upload required identity images,
+            and reuse your profile when making future bookings.
+        </p>
+
+        <a
+            href="{% url 'customer_portal:customer_register' %}"
+            class="text-link"
+        >
+            Register as guest
+        </a>
+
+    </div>
+
+
+    <div>
+
+        <p class="eyebrow">
+            For Staff
+        </p>
+
+        <h2>
+            Manage the hotel workflow securely.
+        </h2>
+
+        <p>
+            Admin and receptionist users can access internal
+            modules for bookings, rooms, check-in, check-out,
+            payment records, and reports.
+        </p>
+
+        <!-- Use Django URL reversing instead of a hard-coded path.
+             Dùng Django URL reversing thay vì hard-code đường dẫn. -->
+        <a
+            href="{% url 'login' %}"
+            class="text-link"
+        >
+            Staff login
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

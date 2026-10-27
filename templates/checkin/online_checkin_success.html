@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     SUCCESS MESSAGE
+     THÔNG BÁO CHECK-IN THÀNH CÔNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body text-center p-5">
+
+        <i
+            class="bi bi-check-circle-fill text-success"
+            style="font-size: 64px;"
+        ></i>
+
+        <h2 class="mt-3">
+            Online Face Check-in Successful
+        </h2>
+
+        <p class="text-muted">
+            Customer face has been verified successfully
+            and the check-in record has been saved.
+        </p>
+
+        <hr>
+
+
+        <!-- =================================================
+             VERIFIED IMAGE
+             ẢNH ĐÃ XÁC MINH
+             ================================================= -->
+
+        {% if online_checkin.verified_image %}
+
+            <div class="mb-4">
+
+                <p class="fw-semibold mb-2">
+                    Verified Face Image
+                </p>
+
+                <img
+                    src="{{ online_checkin.verified_image.url }}"
+                    alt="Verified face image"
+                    class="rounded border"
+                    style="
+                        width: 160px;
+                        height: 160px;
+                        object-fit: cover;
+                    "
+                >
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             CUSTOMER + BOOKING INFORMATION
+             THÔNG TIN KHÁCH + BOOKING
+             ================================================= -->
+
+        <div class="row text-start mt-4">
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Customer Information
+                </h5>
+
+                <p>
+                    <strong>Customer:</strong>
+                    {{ booking.full_name }}
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    {{ booking.email }}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    {{ booking.phone }}
+                </p>
+
+                <p>
+                    <strong>Identity Number:</strong>
+
+                    {% if booking.identity_number %}
+                        {{ booking.identity_number }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Booking Information
+                </h5>
+
+                <p>
+                    <strong>Room:</strong>
+                    {{ booking.room.room_number }}
+                </p>
+
+                <p>
+                    <strong>Room Type:</strong>
+                    {{ booking.room.room_type.name }}
+                </p>
+
+                <p>
+                    <strong>Scheduled Check-in:</strong>
+                    {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                </p>
+
+                <p>
+                    <strong>Scheduled Check-out:</strong>
+                    {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+
+                    <span class="badge bg-success">
+                        {{ booking.get_status_display }}
+                    </span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+
+        <!-- =================================================
+             CHECK-IN RECORD INFORMATION
+             THÔNG TIN BẢN GHI CHECK-IN
+             ================================================= -->
+
+        <div class="row text-start mt-4">
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Verification Information
+                </h5>
+
+                <p>
+                    <strong>Verification Method:</strong>
+                    {{ online_checkin.get_method_display }}
+                </p>
+
+                <p>
+                    <strong>Face Verified:</strong>
+
+                    {% if online_checkin.face_verified %}
+                        <span class="badge bg-success">
+                            Verified
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger">
+                            Not Verified
+                        </span>
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5 class="mb-3">
+                    Check-in Record
+                </h5>
+
+                <p>
+                    <strong>Actual Check-in Time:</strong>
+                    {{ online_checkin.check_in_time|date:"Y-m-d H:i" }}
+                </p>
+
+                <p>
+                    <strong>Processed By:</strong>
+
+                    {% if online_checkin.staff %}
+                        {{ online_checkin.staff.username }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTION BUTTONS
+             CÁC NÚT THAO TÁC
+             ================================================= -->
+
+        <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
+
+            <!-- Start another Online Face Check-in.
+                 Thực hiện Online Face Check-in khác. -->
+            <a
+                href="{% url 'online_face_checkin' %}"
+                class="btn btn-warning"
+            >
+                <i class="bi bi-camera"></i>
+                Check In Another Booking
+            </a>
+
+            <!-- Open complete check-in history.
+                 Mở toàn bộ lịch sử check-in. -->
+            <a
+                href="{% url 'checkin_history' %}"
+                class="btn btn-outline-success"
+            >
+                <i class="bi bi-clock-history"></i>
+                Check-in History
+            </a>
+
+            <!-- Return to online booking requests.
+                 Quay lại yêu cầu booking online. -->
+            <a
+                href="{% url 'bookings:online_booking_requests' %}"
+                class="btn btn-outline-primary"
+            >
+                <i class="bi bi-inbox"></i>
+                Online Requests
+            </a>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="btn btn-dark"
+            >
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

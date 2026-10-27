@@ -1,0 +1,1246 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Reports Dashboard
+        </h2>
+
+        <p class="text-muted mb-0">
+            Current workflow statistics for bookings,
+            face check-ins, check-outs and recorded payments.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back to Dashboard
+    </a>
+
+</div>
+
+
+<!-- ========================================================
+     CURRENT WORKFLOW SUMMARY
+     TỔNG QUAN WORKFLOW HIỆN TẠI
+     ======================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-success text-white h-100">
+
+            <div class="card-body">
+
+                <!-- Revenue includes only paid records from
+                     the current staff and Customer Portal workflows. -->
+                <!-- Revenue chỉ gồm các payment paid thuộc
+                     workflow staff và Customer Portal hiện tại. -->
+
+                <h5>
+                    Current Workflow Revenue
+                </h5>
+
+                <h2>
+                    {{ total_revenue|floatformat:2 }}
+                </h2>
+
+                <i class="bi bi-cash-stack fs-1"></i>
+
+                <div class="small mt-2">
+                    Recorded paid payments
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-primary text-white h-100">
+
+            <div class="card-body">
+
+                <h5>
+                    Total Customers
+                </h5>
+
+                <h2>
+                    {{ total_customers }}
+                </h2>
+
+                <i class="bi bi-people fs-1"></i>
+
+                <div class="small mt-2">
+                    Estimated unique customers
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-warning text-dark h-100">
+
+            <div class="card-body">
+
+                <!-- Legacy public Booking records are intentionally
+                     excluded from this number. -->
+                <!-- Public Booking legacy chủ động không được
+                     tính trong số này. -->
+
+                <h5>
+                    Current Workflow Bookings
+                </h5>
+
+                <h2>
+                    {{ total_bookings }}
+                </h2>
+
+                <i class="bi bi-calendar-check fs-1"></i>
+
+                <div class="small mt-2">
+                    Staff + Customer Portal
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-danger text-white h-100">
+
+            <div class="card-body">
+
+                <!-- This is a point-in-time operational ratio,
+                     not a historical occupancy KPI. -->
+                <!-- Đây là tỷ lệ vận hành tại thời điểm hiện tại,
+                     không phải KPI occupancy lịch sử. -->
+
+                <h5>
+                    Current Occupied Ratio
+                </h5>
+
+                <h2>
+                    {{ occupancy_rate }}%
+                </h2>
+
+                <i class="bi bi-bar-chart fs-1"></i>
+
+                <div class="small mt-2">
+                    Occupied rooms / total rooms
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     CURRENT BOOKING / CHECK-IN / CHECKOUT
+     BOOKING / CHECK-IN / CHECKOUT HIỆN TẠI
+     ======================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-dark text-white h-100">
+
+            <div class="card-body">
+
+                <h5>
+                    Staff Bookings
+                </h5>
+
+                <h2>
+                    {{ staff_bookings_count }}
+                </h2>
+
+                <i class="bi bi-person-workspace fs-1"></i>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-info text-white h-100">
+
+            <div class="card-body">
+
+                <h5>
+                    Customer Portal Bookings
+                </h5>
+
+                <h2>
+                    {{ portal_bookings_count }}
+                </h2>
+
+                <i class="bi bi-globe2 fs-1"></i>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-secondary text-white h-100">
+
+            <div class="card-body">
+
+                <h5>
+                    Current Workflow Check-ins
+                </h5>
+
+                <h2>
+                    {{ total_checkins }}
+                </h2>
+
+                <i class="bi bi-person-check fs-1"></i>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-primary text-white h-100">
+
+            <div class="card-body">
+
+                <h5>
+                    Current Workflow Check-outs
+                </h5>
+
+                <h2>
+                    {{ total_checkouts }}
+                </h2>
+
+                <i class="bi bi-box-arrow-right fs-1"></i>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     PAYMENT / REVENUE NOTE
+     GHI CHÚ THANH TOÁN / DOANH THU
+     ======================================================== -->
+
+<div class="alert alert-info">
+
+    <!-- The project records manual/simulated payment status.
+         It does not process a real payment gateway transaction. -->
+    <!-- Project ghi nhận trạng thái payment thủ công/mô phỏng.
+         Hệ thống không xử lý giao dịch qua payment gateway thật. -->
+
+    <strong>
+        Payment reporting:
+    </strong>
+
+    Revenue values are calculated from payment records marked
+    as <strong>Paid</strong>. They represent the system's
+    manual/simulated payment workflow, not external payment
+    gateway settlement data.
+
+</div>
+
+
+<!-- ========================================================
+     CURRENT REVENUE
+     DOANH THU WORKFLOW HIỆN TẠI
+     ======================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Current Revenue Breakdown
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>
+                        Staff Booking Revenue
+                    </span>
+
+                    <strong>
+                        {{ staff_revenue|floatformat:2 }}
+                    </strong>
+                </div>
+
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>
+                        Customer Portal Revenue
+                    </span>
+
+                    <strong>
+                        {{ portal_online_revenue|floatformat:2 }}
+                    </strong>
+                </div>
+
+
+                <div
+                    class="d-flex justify-content-between py-2"
+                >
+                    <span>
+                        <strong>
+                            Current Workflow Revenue
+                        </strong>
+                    </span>
+
+                    <strong>
+                        {{ total_revenue|floatformat:2 }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-8">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Current Workflow Monthly Revenue
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <!-- Legacy payment records are not included
+                     in this chart. -->
+                <!-- Payment legacy không được tính
+                     trong biểu đồ này. -->
+
+                <p class="text-muted small">
+                    Includes paid Staff Booking and Customer Portal
+                    payment records only.
+                </p>
+
+                <canvas
+                    id="revenueChart"
+                    height="110"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     CURRENT ROOM OPERATIONAL STATUS
+     TRẠNG THÁI VẬN HÀNH PHÒNG HIỆN TẠI
+     ======================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Current Room Operational Status
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <!-- Current Room.status does not represent
+                     future-date booking availability. -->
+                <!-- Room.status hiện tại không đại diện cho
+                     availability ở ngày tương lai. -->
+
+                <p class="text-muted small">
+                    Future room availability is determined by
+                    booking overlap for the selected stay period.
+                </p>
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle mb-0">
+
+                        <tr>
+                            <th>Available</th>
+                            <td>{{ available_rooms }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Reserved</th>
+                            <td>{{ reserved_rooms }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Occupied</th>
+                            <td>{{ occupied_rooms }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Cleaning</th>
+                            <td>{{ cleaning_rooms }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Maintenance</th>
+                            <td>{{ maintenance_rooms }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Total Rooms</th>
+
+                            <td>
+                                <strong>
+                                    {{ total_rooms }}
+                                </strong>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         CURRENT CHECK-IN / CHECKOUT SUMMARY
+         TÓM TẮT CHECK-IN / CHECKOUT HIỆN TẠI
+         ==================================================== -->
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Current Check-in / Check-out Summary
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle mb-0">
+
+                        <tr>
+                            <th>Staff Check-ins</th>
+                            <td>{{ staff_checkins_count }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Customer Portal Check-ins</th>
+                            <td>{{ portal_online_checkins_count }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Staff Check-outs</th>
+                            <td>{{ staff_checkouts_count }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Customer Portal Check-outs</th>
+                            <td>{{ portal_online_checkouts_count }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Current Workflow Check-ins</th>
+
+                            <td>
+                                <strong>
+                                    {{ total_checkins }}
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Current Workflow Check-outs</th>
+
+                            <td>
+                                <strong>
+                                    {{ total_checkouts }}
+                                </strong>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     BOOKING STATUS
+     TRẠNG THÁI BOOKING
+     ======================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- ====================================================
+         STAFF BOOKING STATUS
+         TRẠNG THÁI BOOKING STAFF
+         ==================================================== -->
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Staff Booking Status
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle mb-0">
+
+                        <tr>
+                            <th>Pending Confirmation</th>
+                            <td>{{ pending_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Confirmed</th>
+                            <td>{{ confirmed_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Checked In</th>
+                            <td>{{ checked_in_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Checked Out</th>
+                            <td>{{ checked_out_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Cancelled</th>
+                            <td>{{ cancelled_bookings }}</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         CUSTOMER PORTAL BOOKING STATUS
+         TRẠNG THÁI BOOKING CUSTOMER PORTAL
+         ==================================================== -->
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Customer Portal Booking Status
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle mb-0">
+
+                        <tr>
+                            <th>Pending</th>
+                            <td>{{ pending_online_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Confirmed</th>
+                            <td>{{ confirmed_online_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Checked In</th>
+                            <td>{{ checked_in_online_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Checked Out</th>
+                            <td>{{ checked_out_online_bookings }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Cancelled</th>
+                            <td>{{ cancelled_online_bookings }}</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     HISTORICAL LEGACY RECORDS
+     RECORD LEGACY LỊCH SỬ
+     ======================================================== -->
+
+{% if legacy_online_bookings_count or legacy_online_checkins_count or legacy_online_checkouts_count or legacy_online_revenue %}
+
+    <div class="card card-dashboard mb-4 border-secondary">
+
+        <div class="card-header bg-secondary text-white">
+
+            <h5 class="mb-0">
+                Historical Legacy Public Booking Records
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Legacy records are retained for history only
+                 and are excluded from current workflow KPIs. -->
+            <!-- Record legacy chỉ được giữ cho mục đích lịch sử
+                 và không được tính vào KPI workflow hiện tại. -->
+
+            <p class="text-muted">
+                These records belong to the removed legacy public
+                booking workflow. They are stored for historical
+                reference and are excluded from current workflow totals.
+            </p>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle mb-0">
+
+                    <tr>
+                        <th>
+                            Legacy Booking Records
+                        </th>
+
+                        <td>
+                            {{ legacy_online_bookings_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Legacy Check-in Records
+                        </th>
+
+                        <td>
+                            {{ legacy_online_checkins_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Legacy Check-out Records
+                        </th>
+
+                        <td>
+                            {{ legacy_online_checkouts_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Legacy Recorded Revenue
+                        </th>
+
+                        <td>
+                            {{ legacy_online_revenue|floatformat:2 }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            All Booking Records in Database
+                        </th>
+
+                        <td>
+                            {{ all_booking_records_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            All Check-in Records in Database
+                        </th>
+
+                        <td>
+                            {{ all_checkin_records_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            All Check-out Records in Database
+                        </th>
+
+                        <td>
+                            {{ all_checkout_records_count }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            All Recorded Paid Revenue
+                        </th>
+
+                        <td>
+                            {{ all_recorded_revenue|floatformat:2 }}
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- ========================================================
+     RECENT CUSTOMER PORTAL BOOKINGS
+     CUSTOMER PORTAL BOOKING GẦN ĐÂY
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div
+        class="card-header bg-white
+               d-flex justify-content-between
+               align-items-center"
+    >
+
+        <h5 class="mb-0">
+            Recent Customer Portal Bookings
+        </h5>
+
+        <a
+            href="{% url 'bookings:online_booking_requests' %}"
+            class="btn btn-sm btn-outline-primary"
+        >
+            View All Customer Portal Requests
+        </a>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_online_bookings %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Room</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th class="text-end">
+                                Action
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for booking in recent_online_bookings %}
+
+                            <tr>
+
+                                <td>
+                                    {{ booking.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ booking.email }}
+                                </td>
+
+                                <td>
+                                    {{ booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                                </td>
+
+                                <td>
+                                    {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                                </td>
+
+                                <td>
+                                    {{ booking.total_price|floatformat:2 }}
+                                </td>
+
+                                <td>
+
+                                    {% if booking.status == 'pending' %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% elif booking.status == 'confirmed' %}
+
+                                        <span class="badge bg-primary">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% elif booking.status == 'checked_in' %}
+
+                                        <span class="badge bg-success">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% elif booking.status == 'checked_out' %}
+
+                                        <span class="badge bg-secondary">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% elif booking.status == 'cancelled' %}
+
+                                        <span class="badge bg-danger">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            {{ booking.get_status_display }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'bookings:online_booking_detail' booking.id %}"
+                                        class="btn btn-sm btn-info text-white"
+                                    >
+                                        View
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No Customer Portal booking records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     RECENT CUSTOMER PORTAL PAYMENTS
+     PAYMENT CUSTOMER PORTAL GẦN ĐÂY
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            Recent Customer Portal Payment Records
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_online_payments %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Payment Date</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for payment in recent_online_payments %}
+
+                            <tr>
+
+                                <td>
+                                    {{ payment.booking.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ payment.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ payment.amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    {{ payment.get_payment_method_display }}
+                                </td>
+
+                                <td>
+
+                                    {% if payment.status == 'paid' %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% elif payment.status == 'unpaid' %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Unpaid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            Failed
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ payment.payment_date|date:"Y-m-d H:i" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No Customer Portal payment records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     RECENT STAFF PAYMENTS
+     PAYMENT STAFF GẦN ĐÂY
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            Recent Staff Booking Payment Records
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_payments %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Payment Date</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for payment in recent_payments %}
+
+                            <tr>
+
+                                <td>
+                                    {{ payment.booking.customer.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ payment.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ payment.amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    {{ payment.get_payment_method_display }}
+                                </td>
+
+                                <td>
+
+                                    {% if payment.status == 'paid' %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% elif payment.status == 'unpaid' %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Unpaid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            Failed
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ payment.payment_date|date:"Y-m-d H:i" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No staff payment records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     CHART DATA
+     DỮ LIỆU BIỂU ĐỒ
+     ======================================================== -->
+
+<!-- Safely serialize chart data into HTML.
+     Serialize dữ liệu biểu đồ an toàn vào HTML. -->
+
+{{ revenue_labels|json_script:"revenue-labels-data" }}
+{{ revenue_values|json_script:"revenue-values-data" }}
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<!-- ========================================================
+     REVENUE CHART
+     BIỂU ĐỒ DOANH THU
+     ======================================================== -->
+
+<!-- Load Chart.js for the reports visualization.
+     Tải Chart.js để hiển thị biểu đồ reports. -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Read safely serialized revenue data.
+    // Đọc dữ liệu revenue đã được serialize an toàn.
+    const revenueLabels = JSON.parse(
+        document.getElementById(
+            "revenue-labels-data"
+        ).textContent
+    );
+
+    const revenueValues = JSON.parse(
+        document.getElementById(
+            "revenue-values-data"
+        ).textContent
+    );
+
+    const revenueCanvas = document.getElementById(
+        "revenueChart"
+    );
+
+    // Create the chart only when its canvas exists.
+    // Chỉ tạo biểu đồ khi canvas tồn tại.
+    if (revenueCanvas) {
+        new Chart(
+            revenueCanvas,
+            {
+                type: "bar",
+
+                data: {
+                    labels: revenueLabels,
+
+                    datasets: [
+                        {
+                            label: "Current Workflow Revenue",
+                            data: revenueValues,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        );
+    }
+</script>
+
+{% endblock %}

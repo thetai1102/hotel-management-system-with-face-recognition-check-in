@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="mb-0">
+        Checkout History
+    </h2>
+
+    <div class="d-flex gap-2">
+
+        <!-- Checkout for staff/manual bookings. -->
+        <!-- Checkout cho booking staff/thủ công. -->
+        <a
+            href="{% url 'checkout_create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-cash-stack"></i>
+            New Checkout
+        </a>
+
+        <!-- Checkout for Customer Portal bookings. -->
+        <!-- Checkout cho booking từ Customer Portal. -->
+        <a
+            href="{% url 'online_checkout' %}"
+            class="btn btn-success"
+        >
+            <i class="bi bi-credit-card"></i>
+            Online Checkout
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     STAFF CHECKOUT HISTORY
+     LỊCH SỬ CHECKOUT BOOKING STAFF
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            Staff Booking Checkouts
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if checkouts %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Checkout Time</th>
+                            <th>Final Amount</th>
+                            <th>Staff</th>
+                            <th class="text-end">Invoice</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for checkout in checkouts %}
+
+                            <tr>
+
+                                <td>
+                                    {{ checkout.booking.customer.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.check_out_time|date:"Y-m-d H:i" }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.final_amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    {% if checkout.staff %}
+                                        {{ checkout.staff.username }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'invoice_detail' checkout.id %}"
+                                        class="btn btn-sm btn-info text-white"
+                                    >
+                                        <i class="bi bi-receipt"></i>
+                                        View Invoice
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No staff checkout records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     ONLINE CHECKOUT HISTORY
+     LỊCH SỬ CHECKOUT CUSTOMER PORTAL
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            Online Booking Checkouts
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if online_checkouts %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Room</th>
+                            <th>Checkout Time</th>
+                            <th>Final Amount</th>
+                            <th>Staff</th>
+                            <th class="text-end">Invoice</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for checkout in online_checkouts %}
+
+                            <tr>
+
+                                <!-- Customer data is stored as a booking snapshot. -->
+                                <!-- Dữ liệu khách được lưu dạng snapshot trong booking. -->
+                                <td>
+                                    {{ checkout.booking.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.booking.email }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.check_out_time|date:"Y-m-d H:i" }}
+                                </td>
+
+                                <td>
+                                    {{ checkout.final_amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    {% if checkout.staff %}
+                                        {{ checkout.staff.username }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td class="text-end">
+
+                                    <!-- Online invoice uses the CustomerBooking ID. -->
+                                    <!-- Hóa đơn online sử dụng ID của CustomerBooking. -->
+                                    <a
+                                        href="{% url 'online_invoice_detail' checkout.booking.id %}"
+                                        class="btn btn-sm btn-success"
+                                    >
+                                        <i class="bi bi-receipt"></i>
+                                        View Invoice
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No online checkout records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

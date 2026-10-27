@@ -1,0 +1,100 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Contact - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     CONTACT PAGE HERO
+     PHẦN GIỚI THIỆU TRANG LIÊN HỆ
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Contact
+    </p>
+
+    <h1>
+        Plan your stay with us.
+    </h1>
+
+    <p>
+        Maison Lumière is the demonstration hotel used by the
+        Hotel Management System with Face Recognition Check-in project.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     CONTACT INFORMATION
+     THÔNG TIN LIÊN HỆ
+     ======================================================== -->
+
+<section class="contact-section">
+
+    <div class="contact-card">
+
+        <h2>
+            Maison Lumière
+        </h2>
+
+        <p>
+            Rzeszów, Poland
+        </p>
+
+        <!-- These contact details are demonstration data.
+             Các thông tin liên hệ này là dữ liệu demo. -->
+
+        <p>
+            Email:
+            contact@maisonlumiere.local
+        </p>
+
+        <p>
+            Phone:
+            +48 000 000 000
+        </p>
+
+        <small class="text-muted">
+            Demonstration contact information for the project.
+        </small>
+
+    </div>
+
+
+    <!-- ====================================================
+         USEFUL LINKS
+         CÁC LIÊN KẾT HỮU ÍCH
+         ==================================================== -->
+
+    <div class="contact-card">
+
+        <h2>
+            Useful Links
+        </h2>
+
+        <p>
+            <a href="{% url 'customer_portal:customer_register' %}">
+                Create guest account
+            </a>
+        </p>
+
+        <p>
+            <a href="{% url 'customer_portal:customer_login' %}">
+                Guest login
+            </a>
+        </p>
+
+        <p>
+            <a href="{% url 'login' %}">
+                Staff login
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

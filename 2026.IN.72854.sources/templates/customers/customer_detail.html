@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Customer Detail
+        </h2>
+
+        <p class="text-muted mb-0">
+            Customer information and face verification reference images.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'customer_update' customer.pk %}"
+            class="btn btn-warning"
+        >
+            <i class="bi bi-pencil"></i>
+            Edit
+        </a>
+
+        <a
+            href="{% url 'customer_list' %}"
+            class="btn btn-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     CUSTOMER INFORMATION
+     THÔNG TIN KHÁCH HÀNG
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            <i class="bi bi-person"></i>
+            Customer Information
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered align-middle">
+
+            <tr>
+                <th width="30%">
+                    Full Name
+                </th>
+
+                <td>
+                    {{ customer.full_name }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    Phone
+                </th>
+
+                <td>
+                    {{ customer.phone }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    Email
+                </th>
+
+                <td>
+                    {{ customer.email|default:"-" }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    ID Card / Passport
+                </th>
+
+                <td>
+                    {{ customer.id_card_number }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    Address
+                </th>
+
+                <td>
+                    {{ customer.address|default:"-" }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>
+                    Created At
+                </th>
+
+                <td>
+                    {{ customer.created_at|date:"Y-m-d H:i" }}
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     FACE VERIFICATION REFERENCE
+     ẢNH THAM CHIẾU XÁC MINH KHUÔN MẶT
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            <i class="bi bi-person-bounding-box"></i>
+            Face Verification Reference
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+
+        <!-- Selfie is the preferred reference image.
+             Selfie là ảnh tham chiếu được ưu tiên. -->
+        {% if customer.selfie_image %}
+
+            <div class="alert alert-success">
+
+                <strong>Active reference image:</strong>
+                Selfie Image
+
+            </div>
+
+            <div class="text-center">
+
+                <img
+                    src="{{ customer.selfie_image.url }}"
+                    alt="Customer selfie reference"
+                    class="img-fluid rounded border"
+                    style="
+                        max-width: 320px;
+                        max-height: 320px;
+                        object-fit: cover;
+                    "
+                >
+
+                <p class="text-muted mt-2 mb-0">
+                    This selfie is currently used first
+                    during Face Recognition Check-in.
+                </p>
+
+            </div>
+
+
+        <!-- Legacy face image is used only when no selfie exists.
+             Ảnh face legacy chỉ được dùng khi chưa có selfie. -->
+        {% elif customer.face_image %}
+
+            <div class="alert alert-warning">
+
+                <strong>Active reference image:</strong>
+                Legacy Face Image
+
+            </div>
+
+            <div class="text-center">
+
+                <img
+                    src="{{ customer.face_image.url }}"
+                    alt="Legacy customer face reference"
+                    class="img-fluid rounded border"
+                    style="
+                        max-width: 320px;
+                        max-height: 320px;
+                        object-fit: cover;
+                    "
+                >
+
+                <p class="text-muted mt-2 mb-0">
+                    No selfie is available, so the system falls back
+                    to this legacy face image during Face Check-in.
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-danger mb-0">
+
+                <strong>No face reference image available.</strong>
+
+                Face Recognition Check-in cannot be completed
+                until a selfie or legacy face image is uploaded.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     STORED CUSTOMER IMAGES
+     CÁC ẢNH KHÁCH HÀNG ĐÃ LƯU
+     ======================================================== -->
+
+<div class="row g-4">
+
+
+    <!-- ====================================================
+         IDENTITY DOCUMENT
+         GIẤY TỜ TÙY THÂN
+         ==================================================== -->
+
+    <div class="col-md-4">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h6 class="mb-0">
+                    Identity Document
+                </h6>
+
+            </div>
+
+            <div class="card-body text-center">
+
+                {% if customer.id_document_image %}
+
+                    <img
+                        src="{{ customer.id_document_image.url }}"
+                        alt="Customer identity document"
+                        class="img-fluid rounded border"
+                        style="
+                            max-height: 280px;
+                            object-fit: contain;
+                        "
+                    >
+
+                {% else %}
+
+                    <div class="border rounded p-4 text-muted">
+                        No identity document uploaded.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         SELFIE IMAGE
+         ẢNH SELFIE
+         ==================================================== -->
+
+    <div class="col-md-4">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h6 class="mb-0">
+                    Selfie Image
+                </h6>
+
+            </div>
+
+            <div class="card-body text-center">
+
+                {% if customer.selfie_image %}
+
+                    <img
+                        src="{{ customer.selfie_image.url }}"
+                        alt="Customer selfie"
+                        class="img-fluid rounded border"
+                        style="
+                            max-height: 280px;
+                            object-fit: cover;
+                        "
+                    >
+
+                    <div class="form-text mt-2">
+                        Preferred face reference.
+                    </div>
+
+                {% else %}
+
+                    <div class="border rounded p-4 text-muted">
+                        No selfie uploaded.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         LEGACY FACE IMAGE
+         ẢNH FACE LEGACY
+         ==================================================== -->
+
+    <div class="col-md-4">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h6 class="mb-0">
+                    Legacy Face Image
+                </h6>
+
+            </div>
+
+            <div class="card-body text-center">
+
+                {% if customer.face_image %}
+
+                    <img
+                        src="{{ customer.face_image.url }}"
+                        alt="Legacy customer face image"
+                        class="img-fluid rounded border"
+                        style="
+                            max-height: 280px;
+                            object-fit: cover;
+                        "
+                    >
+
+                    <div class="form-text mt-2">
+                        Used only when no selfie is available.
+                    </div>
+
+                {% else %}
+
+                    <div class="border rounded p-4 text-muted">
+                        No legacy face image uploaded.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

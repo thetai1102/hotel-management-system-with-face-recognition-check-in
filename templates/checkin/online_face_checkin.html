@@ -1,0 +1,586 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Online Face Check-in
+        </h2>
+
+        <p class="text-muted mb-0">
+            Verify the guest's current face against the registered reference selfie.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <!-- Open check-in history.
+             Mở lịch sử check-in. -->
+        <a
+            href="{% url 'checkin_history' %}"
+            class="btn btn-outline-primary"
+        >
+            <i class="bi bi-clock-history"></i>
+            Check-in History
+        </a>
+
+        <!-- Return to online booking requests.
+             Quay lại danh sách yêu cầu booking online. -->
+        <a
+            href="{% url 'bookings:online_booking_requests' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Online Requests
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+    <!-- ====================================================
+         FACE VERIFICATION FORM
+         FORM XÁC MINH KHUÔN MẶT
+         ==================================================== -->
+
+    <div class="col-md-7">
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-camera"></i>
+                    Face Verification
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="alert alert-info">
+                    <strong>Instruction:</strong>
+                    Select a confirmed online booking, then upload
+                    or capture the guest's current face image.
+                </div>
+
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    id="onlineFaceCheckinForm"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- Display form-wide validation errors.
+                         Hiển thị lỗi validation chung của form. -->
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =====================================
+                         ONLINE BOOKING
+                         BOOKING ONLINE
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ form.booking.id_for_label }}"
+                            class="form-label"
+                        >
+                            Confirmed Online Booking
+                        </label>
+
+                        {{ form.booking }}
+
+                        {% if form.booking.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {% for error in form.booking.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="form-text">
+                            Only confirmed bookings that are currently
+                            within their valid check-in period are shown.
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- =====================================
+                         OPTION 1: UPLOAD IMAGE
+                         LỰA CHỌN 1: UPLOAD ẢNH
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ form.checkin_image.id_for_label }}"
+                            class="form-label"
+                        >
+                            Upload Current Face Image
+                        </label>
+
+                        {{ form.checkin_image }}
+
+                        {% if form.checkin_image.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {% for error in form.checkin_image.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="form-text">
+                            Upload a clear front-facing image with
+                            good lighting and only one visible face.
+                        </div>
+
+                    </div>
+
+
+                    <div class="text-center my-3">
+                        <span class="text-muted">
+                            OR
+                        </span>
+                    </div>
+
+
+                    <!-- =====================================
+                         OPTION 2: CAMERA
+                         LỰA CHỌN 2: CAMERA
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Capture Face From Camera
+                        </label>
+
+                        <div class="border rounded p-3 bg-light">
+
+                            <!-- Live camera preview.
+                                 Hình ảnh trực tiếp từ camera. -->
+                            <video
+                                id="camera"
+                                width="100%"
+                                autoplay
+                                playsinline
+                                muted
+                                style="max-height: 320px; background: #000;"
+                            ></video>
+
+                            <!-- Hidden canvas used for snapshot capture.
+                                 Canvas ẩn dùng để chụp ảnh từ camera. -->
+                            <canvas
+                                id="snapshot"
+                                class="d-none"
+                            ></canvas>
+
+                            {{ form.captured_image }}
+
+
+                            <div class="mt-3 d-flex flex-wrap gap-2">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    id="startCameraBtn"
+                                >
+                                    <i class="bi bi-camera-video"></i>
+                                    Start Camera
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success"
+                                    id="captureBtn"
+                                    disabled
+                                >
+                                    <i class="bi bi-camera"></i>
+                                    Capture
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger"
+                                    id="stopCameraBtn"
+                                    disabled
+                                >
+                                    <i class="bi bi-stop-circle"></i>
+                                    Stop
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="cameraStatus"
+                                class="form-text mt-2"
+                            >
+                                Start the camera before capturing an image.
+                            </div>
+
+
+                            <!-- Captured image preview.
+                                 Xem trước ảnh vừa chụp. -->
+                            <div class="mt-3">
+
+                                <p class="mb-1 text-muted">
+                                    Captured Preview:
+                                </p>
+
+                                <img
+                                    id="capturedPreview"
+                                    alt="Captured face preview"
+                                    class="img-fluid rounded border"
+                                    style="display: none; max-height: 280px;"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         SUBMIT
+                         GỬI FORM
+                         ===================================== -->
+
+                    <button
+                        type="submit"
+                        class="btn btn-warning w-100 mt-3"
+                    >
+                        <i class="bi bi-person-check"></i>
+                        Verify Face & Check In
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         PROCESS DESCRIPTION
+         MÔ TẢ QUY TRÌNH
+         ==================================================== -->
+
+    <div class="col-md-5">
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    How it works
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <ol class="mb-0">
+
+                    <li class="mb-2">
+                        Select an online booking that has been
+                        confirmed by hotel staff.
+                    </li>
+
+                    <li class="mb-2">
+                        Upload or capture the guest's current
+                        face image.
+                    </li>
+
+                    <li class="mb-2">
+                        The system first uses the selfie saved
+                        with that booking as the reference image.
+                    </li>
+
+                    <li class="mb-2">
+                        If the booking has no selfie, the system
+                        uses the selfie stored in the customer's profile.
+                    </li>
+
+                    <li class="mb-2">
+                        DeepFace compares the reference image
+                        with the current face image.
+                    </li>
+
+                    <li class="mb-2">
+                        If verification succeeds, an
+                        <strong>Online Check-in</strong>
+                        record is stored in the database.
+                    </li>
+
+                    <li class="mb-2">
+                        The booking status becomes
+                        <strong>Checked in</strong>.
+                    </li>
+
+                    <li>
+                        The room status becomes
+                        <strong>Occupied</strong>.
+                    </li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    // Get camera-related elements.
+    // Lấy các phần tử liên quan đến camera.
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("snapshot");
+    const capturedInput = document.getElementById("id_captured_image");
+    const capturedPreview = document.getElementById("capturedPreview");
+
+    const startCameraBtn = document.getElementById("startCameraBtn");
+    const captureBtn = document.getElementById("captureBtn");
+    const stopCameraBtn = document.getElementById("stopCameraBtn");
+
+    const cameraStatus = document.getElementById("cameraStatus");
+    const onlineFaceCheckinForm = document.getElementById(
+        "onlineFaceCheckinForm"
+    );
+
+    let cameraStream = null;
+
+
+    // Stop all active camera tracks.
+    // Dừng toàn bộ luồng camera đang hoạt động.
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(
+                function (track) {
+                    track.stop();
+                }
+            );
+
+            cameraStream = null;
+            video.srcObject = null;
+        }
+
+        startCameraBtn.disabled = false;
+        captureBtn.disabled = true;
+        stopCameraBtn.disabled = true;
+
+        cameraStatus.textContent =
+            "Camera stopped. Start the camera again if needed.";
+    }
+
+
+    // Start the front-facing camera.
+    // Khởi động camera phía trước.
+    startCameraBtn.addEventListener(
+        "click",
+        async function () {
+
+            // Check browser camera support.
+            // Kiểm tra trình duyệt có hỗ trợ camera hay không.
+            if (
+                !navigator.mediaDevices ||
+                !navigator.mediaDevices.getUserMedia
+            ) {
+                alert(
+                    "Camera access is not supported by this browser."
+                );
+
+                return;
+            }
+
+            try {
+                // Close any existing camera stream first.
+                // Đóng stream camera cũ trước khi mở stream mới.
+                stopCamera();
+
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    },
+                    audio: false
+                });
+
+                video.srcObject = cameraStream;
+
+                // Wait until video information is available.
+                // Chờ tới khi video đã sẵn sàng.
+                await new Promise(
+                    function (resolve) {
+
+                        if (video.readyState >= 1) {
+                            resolve();
+                            return;
+                        }
+
+                        video.onloadedmetadata = function () {
+                            resolve();
+                        };
+                    }
+                );
+
+                await video.play();
+
+                startCameraBtn.disabled = true;
+                captureBtn.disabled = false;
+                stopCameraBtn.disabled = false;
+
+                cameraStatus.textContent =
+                    "Camera is ready. Position the guest's face " +
+                    "clearly and press Capture.";
+
+            } catch (error) {
+                console.error(error);
+
+                stopCamera();
+
+                alert(
+                    "Cannot access camera. Please allow camera permission " +
+                    "or upload a face image instead."
+                );
+            }
+        }
+    );
+
+
+    // Capture a frame from the camera.
+    // Chụp một khung hình từ camera.
+    captureBtn.addEventListener(
+        "click",
+        function () {
+
+            if (!cameraStream) {
+                alert(
+                    "Please start the camera first."
+                );
+
+                return;
+            }
+
+            if (
+                video.videoWidth <= 0 ||
+                video.videoHeight <= 0
+            ) {
+                alert(
+                    "Camera is not ready yet. Please wait and try again."
+                );
+
+                return;
+            }
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const context = canvas.getContext("2d");
+
+            context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            // JPEG is accepted by the face processing utility.
+            // JPEG được hỗ trợ bởi hàm xử lý khuôn mặt.
+            const imageData = canvas.toDataURL(
+                "image/jpeg",
+                0.92
+            );
+
+            capturedInput.value = imageData;
+
+            capturedPreview.src = imageData;
+            capturedPreview.style.display = "block";
+
+            cameraStatus.textContent =
+                "Face image captured successfully.";
+        }
+    );
+
+
+    // Stop camera manually.
+    // Dừng camera thủ công.
+    stopCameraBtn.addEventListener(
+        "click",
+        function () {
+            stopCamera();
+        }
+    );
+
+
+    // Stop camera before submitting the form.
+    // Dừng camera trước khi gửi form.
+    onlineFaceCheckinForm.addEventListener(
+        "submit",
+        function () {
+            stopCamera();
+        }
+    );
+
+
+    // Release the camera when leaving the page.
+    // Giải phóng camera khi rời khỏi trang.
+    window.addEventListener(
+        "beforeunload",
+        function () {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(
+                    function (track) {
+                        track.stop();
+                    }
+                );
+            }
+        }
+    );
+</script>
+
+{% endblock %}

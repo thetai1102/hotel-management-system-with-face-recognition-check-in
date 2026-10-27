@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="mb-1">
+            Rooms
+        </h2>
+
+        <p class="text-muted mb-0">
+            Current operational status of hotel rooms.
+            Total results: {{ rooms|length }}
+        </p>
+
+    </div>
+
+
+    {% if is_admin_role %}
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'room_type_list' %}"
+                class="btn btn-secondary"
+            >
+                Room Types
+            </a>
+
+            <a
+                href="{% url 'room_create' %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-plus-circle"></i>
+                Add Room
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ========================================================
+     STATUS EXPLANATION
+     GIẢI THÍCH TRẠNG THÁI PHÒNG
+     ======================================================== -->
+
+<div class="alert alert-info">
+
+    <!-- Room.status represents only the room's current
+         operational state, not future date availability.
+         Room.status chỉ thể hiện trạng thái vận hành hiện tại,
+         không phải khả năng trống cho ngày trong tương lai. -->
+
+    <strong>Note:</strong>
+
+    Current Status shows the room's operational state now.
+
+    Future booking availability is determined separately
+    from booking date overlaps.
+
+</div>
+
+
+<!-- ========================================================
+     FILTERS
+     BỘ LỌC
+     ======================================================== -->
+
+<div class="card card-dashboard mb-3">
+
+    <div class="card-body">
+
+        <form
+            method="get"
+            class="row g-2"
+        >
+
+            <div class="col-md-4">
+
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search by room number or room type..."
+                    value="{{ search_query }}"
+                >
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <select
+                    name="status"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Current Statuses
+                    </option>
+
+                    {% for value, label in status_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if status_filter == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <select
+                    name="room_type"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Room Types
+                    </option>
+
+                    {% for room_type in room_types %}
+
+                        <option
+                            value="{{ room_type.id }}"
+                            {% if room_type_filter == room_type.id|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ room_type.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-2 d-grid">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-funnel"></i>
+                    Filter
+                </button>
+
+            </div>
+
+        </form>
+
+
+        {% if search_query or status_filter or room_type_filter %}
+
+            <div class="mt-2">
+
+                <a
+                    href="{% url 'room_list' %}"
+                    class="btn btn-sm btn-secondary"
+                >
+                    <i class="bi bi-x-circle"></i>
+                    Clear Filter
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     ROOM LIST
+     DANH SÁCH PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            Room List
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if rooms %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Current Status</th>
+                            <th>Price / Night</th>
+
+                            {% if is_admin_role %}
+                                <th class="text-end">
+                                    Actions
+                                </th>
+                            {% endif %}
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for room in rooms %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ room.room_number }}
+                                    </strong>
+                                </td>
+
+
+                                <td>
+                                    {{ room.room_type.name }}
+                                </td>
+
+
+                                <td>
+                                    {{ room.floor }}
+                                </td>
+
+
+                                <td>
+
+                                    <!-- Display the current operational
+                                         room status explicitly.
+                                         Hiển thị rõ trạng thái vận hành
+                                         hiện tại của phòng. -->
+
+                                    {% if room.status == 'available' %}
+
+                                        <span class="badge bg-success">
+                                            Available
+                                        </span>
+
+                                    {% elif room.status == 'reserved' %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Reserved
+                                        </span>
+
+                                    {% elif room.status == 'occupied' %}
+
+                                        <span class="badge bg-danger">
+                                            Occupied
+                                        </span>
+
+                                    {% elif room.status == 'cleaning' %}
+
+                                        <span class="badge bg-info text-dark">
+                                            Cleaning
+                                        </span>
+
+                                    {% elif room.status == 'maintenance' %}
+
+                                        <span class="badge bg-secondary">
+                                            Maintenance
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-dark">
+                                            Unknown
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ room.room_type.price_per_night }}
+                                </td>
+
+
+                                {% if is_admin_role %}
+
+                                    <td class="text-end">
+
+                                        <a
+                                            href="{% url 'room_update' room.pk %}"
+                                            class="btn btn-sm btn-warning"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                            Edit
+                                        </a>
+
+                                        <a
+                                            href="{% url 'room_delete' room.pk %}"
+                                            class="btn btn-sm btn-danger"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </a>
+
+                                    </td>
+
+                                {% endif %}
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No rooms found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

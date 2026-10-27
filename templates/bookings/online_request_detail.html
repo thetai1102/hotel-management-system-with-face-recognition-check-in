@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Online Booking Detail
+        </h2>
+
+        <p class="text-muted mb-0">
+            Review customer information and booking details.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'bookings:online_booking_requests' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+
+<!-- ========================================================
+     BOOKING DETAIL
+     CHI TIẾT BOOKING
+     ======================================================== -->
+
+<div class="row g-4">
+
+    <!-- ====================================================
+         CUSTOMER INFORMATION
+         THÔNG TIN KHÁCH HÀNG
+         ==================================================== -->
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-person"></i>
+                    Customer Information
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-bordered align-middle">
+
+                    <tr>
+                        <th width="35%">
+                            Full Name
+                        </th>
+
+                        <td>
+                            {{ booking.full_name }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Email
+                        </th>
+
+                        <td>
+                            {{ booking.email }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Phone
+                        </th>
+
+                        <td>
+                            {{ booking.phone }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Identity Number
+                        </th>
+
+                        <td>
+
+                            {% if booking.identity_number %}
+                                {{ booking.identity_number }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                </table>
+
+
+                <!-- Display the identity document saved with this booking.
+                     Hiển thị giấy tờ tùy thân được lưu cùng booking. -->
+                {% if booking.id_document_image %}
+
+                    <div class="mt-4">
+
+                        <h6>
+                            Identity Document
+                        </h6>
+
+                        <img
+                            src="{{ booking.id_document_image.url }}"
+                            alt="Customer identity document"
+                            class="img-fluid rounded border"
+                            style="max-height: 300px;"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         BOOKING INFORMATION
+         THÔNG TIN BOOKING
+         ==================================================== -->
+
+    <div class="col-md-6">
+
+        <div class="card card-dashboard h-100">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-check"></i>
+                    Booking Information
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-bordered align-middle">
+
+                    <tr>
+                        <th width="35%">
+                            Room
+                        </th>
+
+                        <td>
+                            {{ booking.room.room_number }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Room Type
+                        </th>
+
+                        <td>
+                            {{ booking.room.room_type.name }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Check-in
+                        </th>
+
+                        <td>
+                            {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Check-out
+                        </th>
+
+                        <td>
+                            {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Total Price
+                        </th>
+
+                        <td>
+                            <strong>
+                                {{ booking.total_price|floatformat:2 }}
+                            </strong>
+                        </td>
+                    </tr>
+
+
+                    <!-- Display CustomerBooking status.
+                         Hiển thị trạng thái CustomerBooking. -->
+                    <tr>
+                        <th>
+                            Status
+                        </th>
+
+                        <td>
+
+                            {% if booking.status == 'pending' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% elif booking.status == 'confirmed' %}
+
+                                <span class="badge bg-primary">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% elif booking.status == 'checked_in' %}
+
+                                <span class="badge bg-success">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% elif booking.status == 'checked_out' %}
+
+                                <span class="badge bg-dark">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% elif booking.status == 'cancelled' %}
+
+                                <span class="badge bg-danger">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            Created At
+                        </th>
+
+                        <td>
+                            {{ booking.created_at|date:"Y-m-d H:i" }}
+                        </td>
+                    </tr>
+
+                </table>
+
+
+                <!-- Display the selfie stored with this booking.
+                     Hiển thị selfie được lưu cùng booking. -->
+                {% if booking.selfie_image %}
+
+                    <div class="mt-4">
+
+                        <h6>
+                            Registered Selfie
+                        </h6>
+
+                        <img
+                            src="{{ booking.selfie_image.url }}"
+                            alt="Registered customer selfie"
+                            class="rounded border"
+                            style="
+                                width: 180px;
+                                height: 180px;
+                                object-fit: cover;
+                            "
+                        >
+
+                        <div class="form-text mt-2">
+                            This image can be used as the reference
+                            for Online Face Check-in.
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     BOOKING ACTIONS
+     CÁC THAO TÁC BOOKING
+     ======================================================== -->
+
+<div class="card card-dashboard mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+            <i class="bi bi-gear"></i>
+            Booking Actions
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="d-flex flex-wrap gap-2">
+
+
+            <!-- =================================================
+                 PENDING BOOKING
+                 BOOKING ĐANG CHỜ XÁC NHẬN
+                 ================================================= -->
+
+            {% if booking.status == 'pending' %}
+
+                <!-- Confirmation changes server data, therefore POST is required.
+                     Xác nhận làm thay đổi dữ liệu nên bắt buộc dùng POST. -->
+                <form
+                    method="post"
+                    action="{% url 'bookings:confirm_online_booking' booking.id %}"
+                    class="d-inline"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Confirm Booking
+                    </button>
+
+                </form>
+
+
+                <!-- Cancellation also changes server data and must use POST.
+                     Hủy booking cũng thay đổi dữ liệu và phải dùng POST. -->
+                <form
+                    method="post"
+                    action="{% url 'bookings:cancel_online_booking' booking.id %}"
+                    class="d-inline"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger"
+                        onclick="return confirm(
+                            'Are you sure you want to cancel this booking?'
+                        );"
+                    >
+                        <i class="bi bi-x-circle"></i>
+                        Cancel Booking
+                    </button>
+
+                </form>
+
+
+            <!-- =================================================
+                 CONFIRMED BOOKING
+                 BOOKING ĐÃ XÁC NHẬN
+                 ================================================= -->
+
+            {% elif booking.status == 'confirmed' %}
+
+                <!-- Confirmed booking can proceed to face verification.
+                     Booking đã xác nhận có thể thực hiện xác minh khuôn mặt. -->
+                <a
+                    href="{% url 'online_face_checkin' %}"
+                    class="btn btn-warning"
+                >
+                    <i class="bi bi-person-bounding-box"></i>
+                    Online Face Check-in
+                </a>
+
+
+                <form
+                    method="post"
+                    action="{% url 'bookings:cancel_online_booking' booking.id %}"
+                    class="d-inline"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger"
+                        onclick="return confirm(
+                            'Are you sure you want to cancel this booking?'
+                        );"
+                    >
+                        <i class="bi bi-x-circle"></i>
+                        Cancel Booking
+                    </button>
+
+                </form>
+
+
+            <!-- =================================================
+                 CHECKED-IN BOOKING
+                 BOOKING ĐÃ CHECK-IN
+                 ================================================= -->
+
+            {% elif booking.status == 'checked_in' %}
+
+                <!-- Checked-in booking can proceed to checkout.
+                     Booking đã check-in có thể thực hiện checkout. -->
+                <a
+                    href="{% url 'online_checkout' %}"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-credit-card"></i>
+                    Online Checkout
+                </a>
+
+
+            <!-- =================================================
+                 CHECKED-OUT BOOKING
+                 BOOKING ĐÃ CHECKOUT
+                 ================================================= -->
+
+            {% elif booking.status == 'checked_out' %}
+
+                <div class="alert alert-success mb-0 py-2">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    This booking has completed checkout.
+
+                </div>
+
+
+            <!-- =================================================
+                 CANCELLED BOOKING
+                 BOOKING ĐÃ HỦY
+                 ================================================= -->
+
+            {% elif booking.status == 'cancelled' %}
+
+                <div class="alert alert-danger mb-0 py-2">
+
+                    <i class="bi bi-x-circle"></i>
+
+                    This booking has been cancelled.
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Return to the online request list.
+                 Quay lại danh sách booking online. -->
+            <a
+                href="{% url 'bookings:online_booking_requests' %}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Requests
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Booking Detail</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: Georgia, "Times New Roman", serif;
+            background: #f7f3ed;
+            color: #181512;
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .page-header p {
+            color: #6d655d;
+            font-size: 17px;
+        }
+
+        .detail-grid {
+            margin-top: 32px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid rgba(24, 21, 18, 0.16);
+            padding: 28px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-weight: 400;
+            font-size: 28px;
+        }
+
+        .info-row {
+            margin-bottom: 14px;
+        }
+
+        .info-row strong {
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 12px;
+            color: #6d655d;
+        }
+
+        .image-box {
+            margin-bottom: 18px;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            border: 1px solid rgba(24, 21, 18, 0.16);
+        }
+
+        .actions {
+            margin-top: 26px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border: 1px solid #181512;
+            color: #181512;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 13px;
+        }
+
+        .btn-dark {
+            background: #181512;
+            color: white;
+        }
+
+        .btn-danger {
+            border-color: #9b2f2f;
+            color: #9b2f2f;
+        }
+
+        .message {
+            padding: 14px 16px;
+            margin-top: 20px;
+            border: 1px solid #d8c4a5;
+            background: #f4eadb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <h1>Online Booking Detail</h1>
+    <p>Review customer information, uploaded images, and booking status.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="detail-grid">
+    <div class="card">
+        <h2>Booking Information</h2>
+
+        <div class="info-row">
+            <strong>Customer</strong>
+            {{ booking.full_name }}
+        </div>
+
+        <div class="info-row">
+            <strong>Email</strong>
+            {{ booking.email }}
+        </div>
+
+        <div class="info-row">
+            <strong>Phone</strong>
+            {{ booking.phone }}
+        </div>
+
+        <div class="info-row">
+            <strong>ID Card / Passport Number</strong>
+            {{ booking.identity_number|default:"Not provided" }}
+        </div>
+
+        <div class="info-row">
+            <strong>Address</strong>
+            {{ booking.address|default:"Not provided" }}
+        </div>
+
+        <div class="info-row">
+            <strong>Room</strong>
+            {{ booking.room }}
+        </div>
+
+        <div class="info-row">
+            <strong>Check-in</strong>
+            {{ booking.check_in_at }}
+        </div>
+
+        <div class="info-row">
+            <strong>Check-out</strong>
+            {{ booking.check_out_at }}
+        </div>
+
+        <div class="info-row">
+            <strong>Total Price</strong>
+            {{ booking.total_price }}
+        </div>
+
+        <div class="info-row">
+            <strong>Status</strong>
+            {{ booking.get_status_display }}
+        </div>
+
+        <div class="info-row">
+            <strong>Note</strong>
+            {{ booking.note|default:"No note" }}
+        </div>
+
+        <div class="actions">
+            {% if booking.status == "pending" %}
+                <a href="{% url 'bookings:confirm_online_booking' booking.id %}" class="btn btn-dark">
+                    Confirm Booking
+                </a>
+
+                <a href="{% url 'bookings:cancel_online_booking' booking.id %}" class="btn btn-danger">
+                    Cancel Booking
+                </a>
+            {% endif %}
+
+            <a href="{% url 'bookings:online_booking_requests' %}" class="btn">
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Uploaded Images</h2>
+
+        <div class="image-box">
+            <strong>ID Document Image</strong><br><br>
+            {% if booking.id_document_image %}
+                <a href="{{ booking.id_document_image.url }}" target="_blank">
+                    <img src="{{ booking.id_document_image.url }}" alt="ID document">
+                </a>
+            {% else %}
+                <p>No ID document image uploaded.</p>
+            {% endif %}
+        </div>
+
+        <div class="image-box">
+            <strong>Selfie Image</strong><br><br>
+            {% if booking.selfie_image %}
+                <a href="{{ booking.selfie_image.url }}" target="_blank">
+                    <img src="{{ booking.selfie_image.url }}" alt="Selfie image">
+                </a>
+            {% else %}
+                <p>No selfie image uploaded.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

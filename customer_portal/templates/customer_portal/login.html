@@ -1,0 +1,159 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Guest Login - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     CUSTOMER LOGIN PAGE
+     TRANG ĐĂNG NHẬP KHÁCH HÀNG
+     ======================================================== -->
+
+<section class="auth-page">
+
+    <div class="auth-card">
+
+        <p class="eyebrow">
+            Guest Login
+        </p>
+
+        <h1>
+            Welcome Back
+        </h1>
+
+        <p class="auth-intro">
+            Log in with your registered email address or phone number
+            to manage your profile, browse rooms, and view your bookings.
+        </p>
+
+
+        <!-- ====================================================
+             DJANGO MESSAGES
+             THÔNG BÁO DJANGO
+             ==================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- ====================================================
+             LOGIN FORM
+             FORM ĐĂNG NHẬP
+             ==================================================== -->
+
+        <form
+            method="post"
+            class="luxury-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors.
+                 Hiển thị lỗi validation chung của form. -->
+            {% if form.non_field_errors %}
+
+                <div class="message-box">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 EMAIL OR PHONE
+                 EMAIL HOẶC SỐ ĐIỆN THOẠI
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.identifier.id_for_label }}">
+                    Email or phone number
+                </label>
+
+                {{ form.identifier }}
+
+                {% if form.identifier.errors %}
+                    {{ form.identifier.errors }}
+                {% endif %}
+
+                <small>
+                    Enter the email address or phone number
+                    registered with your guest account.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD
+                 MẬT KHẨU
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.password.id_for_label }}">
+                    Password
+                </label>
+
+                {{ form.password }}
+
+                {% if form.password.errors %}
+                    {{ form.password.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBMIT LOGIN
+                 GỬI YÊU CẦU ĐĂNG NHẬP
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="form-submit-btn"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <!-- ====================================================
+             REGISTRATION LINK
+             LIÊN KẾT ĐĂNG KÝ
+             ==================================================== -->
+
+        <p class="auth-bottom-text">
+
+            Do not have an account?
+
+            <a href="{% url 'customer_portal:customer_register' %}">
+                Register here
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="mb-0">
+        Check-in History
+    </h2>
+
+    <div class="d-flex gap-2">
+
+        <!-- Face check-in for staff/manual bookings. -->
+        <!-- Face check-in cho booking staff/thủ công. -->
+        <a
+            href="{% url 'face_checkin' %}"
+            class="btn btn-warning"
+        >
+            <i class="bi bi-camera"></i>
+            Face Check-in
+        </a>
+
+        <!-- Face check-in for Customer Portal bookings. -->
+        <!-- Face check-in cho booking từ Customer Portal. -->
+        <a
+            href="{% url 'online_face_checkin' %}"
+            class="btn btn-info text-white"
+        >
+            <i class="bi bi-person-bounding-box"></i>
+            Online Face Check-in
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     STAFF BOOKING CHECK-IN HISTORY
+     LỊCH SỬ CHECK-IN BOOKING STAFF
+     ======================================================== -->
+
+<div class="card card-dashboard mb-4">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            Staff Booking Check-ins
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if checkins %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Verified Image</th>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Method</th>
+                            <th>Face Verified</th>
+                            <th>Staff</th>
+                            <th>Check-in Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for checkin in checkins %}
+
+                            <tr>
+
+                                <td>
+
+                                    {% if checkin.verified_image %}
+
+                                        <img
+                                            src="{{ checkin.verified_image.url }}"
+                                            alt="Verified face"
+                                            width="55"
+                                            height="55"
+                                            class="rounded-circle object-fit-cover"
+                                        >
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No image
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ checkin.customer.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ checkin.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ checkin.get_method_display }}
+                                </td>
+
+                                <td>
+
+                                    {% if checkin.face_verified %}
+
+                                        <span class="badge bg-success">
+                                            Verified
+                                        </span>
+
+                                    {% elif checkin.manual_verified %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Manual
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            Failed
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if checkin.staff %}
+                                        {{ checkin.staff.username }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ checkin.check_in_time|date:"Y-m-d H:i" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No staff booking check-in records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     ONLINE FACE CHECK-IN HISTORY
+     LỊCH SỬ ONLINE FACE CHECK-IN
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            Online Booking Check-ins
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if online_checkins %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Verified Image</th>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Method</th>
+                            <th>Face Verified</th>
+                            <th>Staff</th>
+                            <th>Check-in Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for checkin in online_checkins %}
+
+                            <tr>
+
+                                <td>
+
+                                    {% if checkin.verified_image %}
+
+                                        <img
+                                            src="{{ checkin.verified_image.url }}"
+                                            alt="Verified online face"
+                                            width="55"
+                                            height="55"
+                                            class="rounded-circle object-fit-cover"
+                                        >
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No image
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <!-- Customer information comes from CustomerBooking. -->
+                                <!-- Thông tin khách lấy từ CustomerBooking. -->
+                                <td>
+                                    {{ checkin.booking.full_name }}
+                                </td>
+
+                                <td>
+                                    {{ checkin.booking.room.room_number }}
+                                </td>
+
+                                <td>
+                                    {{ checkin.get_method_display }}
+                                </td>
+
+                                <td>
+
+                                    {% if checkin.face_verified %}
+
+                                        <span class="badge bg-success">
+                                            Verified
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            Failed
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if checkin.staff %}
+                                        {{ checkin.staff.username }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ checkin.check_in_time|date:"Y-m-d H:i" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No online check-in records found.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

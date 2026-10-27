@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Booking Requests</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: Georgia, "Times New Roman", serif;
+            background: #f7f3ed;
+            color: #181512;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .page-header p {
+            color: #6d655d;
+            font-size: 17px;
+        }
+
+        .top-actions {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .top-actions a {
+            padding: 10px 16px;
+            border: 1px solid #181512;
+            color: #181512;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 13px;
+        }
+
+        .top-actions a.active {
+            background: #181512;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid rgba(24, 21, 18, 0.16);
+        }
+
+        th,
+        td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(24, 21, 18, 0.16);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #6d655d;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .action-link {
+            color: #181512;
+            border-bottom: 1px solid #181512;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 13px;
+        }
+
+        .message {
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border: 1px solid #d8c4a5;
+            background: #f4eadb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <h1>Online Booking Requests</h1>
+    <p>Bookings submitted by customer accounts are listed here.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="top-actions">
+    <a href="{% url 'bookings:online_booking_requests' %}" class="{% if not status_filter %}active{% endif %}">
+        All
+    </a>
+
+    {% for value, label in status_choices %}
+        <a href="{% url 'bookings:online_booking_requests' %}?status={{ value }}"
+           class="{% if status_filter == value %}active{% endif %}">
+            {{ label }}
+        </a>
+    {% endfor %}
+
+    <a href="/dashboard/">Back to Dashboard</a>
+</div>
+
+{% if bookings %}
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Room</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Status</th>
+                <th>Total Price</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>
+                        <strong>{{ booking.full_name }}</strong><br>
+                        {{ booking.email }}<br>
+                        {{ booking.phone }}
+                    </td>
+                    <td>{{ booking.room }}</td>
+                    <td>{{ booking.check_in_at }}</td>
+                    <td>{{ booking.check_out_at }}</td>
+                    <td class="status">{{ booking.get_status_display }}</td>
+                    <td>{{ booking.total_price }}</td>
+                    <td>{{ booking.created_at }}</td>
+                    <td>
+                        <a href="{% url 'bookings:online_booking_detail' booking.id %}" class="action-link">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No online booking requests found.</p>
+{% endif %}
+
+</body>
+</html>

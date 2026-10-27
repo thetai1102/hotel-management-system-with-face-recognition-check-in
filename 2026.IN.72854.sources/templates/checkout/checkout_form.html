@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="mb-0">
+        New Checkout
+    </h2>
+
+    <a
+        href="{% url 'checkout_list' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+
+<div class="row g-4">
+
+    <!-- ====================================================
+         CHECKOUT FORM
+         FORM CHECKOUT
+         ==================================================== -->
+
+    <div class="col-md-7">
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-cash-stack"></i>
+                    Checkout Information
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Only successful payment completes checkout.
+                     Chỉ thanh toán thành công mới hoàn tất checkout. -->
+                <div class="alert alert-info">
+                    <strong>Instruction:</strong>
+                    Select a checked-in booking and process its payment.
+                    The checkout is completed only when the payment status is
+                    <strong>Paid</strong>.
+                </div>
+
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+
+                    <!-- Display form-wide errors.
+                         Hiển thị lỗi chung của form. -->
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =====================================
+                         BOOKING
+                         BOOKING
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ form.booking.id_for_label }}"
+                            class="form-label"
+                        >
+                            Booking
+                        </label>
+
+                        {{ form.booking }}
+
+                        {% if form.booking.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {% for error in form.booking.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="form-text">
+                            Only checked-in bookings without a completed
+                            checkout are shown.
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PAYMENT METHOD
+                         PHƯƠNG THỨC THANH TOÁN
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ form.payment_method.id_for_label }}"
+                            class="form-label"
+                        >
+                            Payment Method
+                        </label>
+
+                        {{ form.payment_method }}
+
+                        {% if form.payment_method.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {% for error in form.payment_method.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PAYMENT STATUS
+                         TRẠNG THÁI THANH TOÁN
+                         ===================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ form.status.id_for_label }}"
+                            class="form-label"
+                        >
+                            Payment Status
+                        </label>
+
+                        {{ form.status }}
+
+                        {% if form.status.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {% for error in form.status.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="form-text">
+                            Select <strong>Paid</strong> to complete checkout.
+                            If <strong>Unpaid</strong> or
+                            <strong>Failed</strong> is selected, the payment
+                            attempt will be recorded but the guest will remain
+                            checked in.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Process payment and checkout.
+                         Xử lý thanh toán và checkout. -->
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Process Payment & Checkout
+                    </button>
+
+                    <a
+                        href="{% url 'checkout_list' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         CHECKOUT PROCESS
+         QUY TRÌNH CHECKOUT
+         ==================================================== -->
+
+    <div class="col-md-5">
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    Checkout Process
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <ol class="mb-0">
+
+                    <li class="mb-2">
+                        Select a booking that has already been checked in.
+                    </li>
+
+                    <li class="mb-2">
+                        Select the payment method.
+                    </li>
+
+                    <li class="mb-2">
+                        Record the payment result.
+                    </li>
+
+                    <li class="mb-2">
+                        Every payment attempt is stored in the database.
+                    </li>
+
+                    <li class="mb-2">
+                        If payment is <strong>Paid</strong>,
+                        the booking becomes
+                        <strong>Checked out</strong>.
+                    </li>
+
+                    <li class="mb-2">
+                        The room becomes
+                        <strong>Available</strong>
+                        after successful checkout.
+                    </li>
+
+                    <li>
+                        The system creates a checkout record and invoice.
+                    </li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

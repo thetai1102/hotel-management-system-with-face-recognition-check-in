@@ -1,0 +1,70 @@
+body {
+    background-color: #f5f6fa;
+}
+
+.sidebar {
+    border-right: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+.sidebar h6 {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.sidebar-link i {
+    font-size: 17px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-link:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.card-dashboard {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.login-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    width: 420px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.face-preview {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.camera-box {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    background-color: #fff;
+}

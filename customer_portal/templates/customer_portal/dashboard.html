@@ -1,0 +1,161 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Guest Dashboard - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     GUEST DASHBOARD HEADER
+     TIÊU ĐỀ DASHBOARD KHÁCH HÀNG
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Guest Dashboard
+    </p>
+
+    <h1>
+        Welcome, {{ request.user.customer_profile.full_name }}
+    </h1>
+
+    <p>
+        Manage your profile, browse hotel rooms,
+        and keep track of your bookings.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     CUSTOMER DASHBOARD ACTIONS
+     CÁC CHỨC NĂNG DASHBOARD CUSTOMER
+     ======================================================== -->
+
+<section class="guest-dashboard-section">
+
+
+    <!-- ====================================================
+         PROFILE
+         HỒ SƠ KHÁCH HÀNG
+         ==================================================== -->
+
+    <div class="dashboard-card">
+
+        <p class="eyebrow">
+            Profile
+        </p>
+
+        <h2>
+            My Profile
+        </h2>
+
+        <p>
+            Save your personal information, identity number,
+            address, identity document image, and selfie image
+            for faster future bookings.
+        </p>
+
+        <a
+            href="{% url 'customer_portal:customer_profile' %}"
+            class="text-link"
+        >
+            Edit Profile
+        </a>
+
+    </div>
+
+
+    <!-- ====================================================
+         ROOMS
+         PHÒNG
+         ==================================================== -->
+
+    <div class="dashboard-card">
+
+        <p class="eyebrow">
+            Rooms
+        </p>
+
+        <h2>
+            Browse Rooms
+        </h2>
+
+        <p>
+            Browse hotel rooms and select your intended
+            check-in and check-out period.
+            Availability is validated when you submit a booking.
+        </p>
+
+        <a
+            href="{% url 'customer_portal:customer_room_list' %}"
+            class="text-link"
+        >
+            View Rooms
+        </a>
+
+    </div>
+
+
+    <!-- ====================================================
+         BOOKINGS
+         BOOKING CỦA KHÁCH
+         ==================================================== -->
+
+    <div class="dashboard-card">
+
+        <p class="eyebrow">
+            Bookings
+        </p>
+
+        <h2>
+            My Bookings
+        </h2>
+
+        <p>
+            View your submitted bookings, stay period,
+            current booking status, and total price.
+        </p>
+
+        <a
+            href="{% url 'customer_portal:customer_my_bookings' %}"
+            class="text-link"
+        >
+            View Bookings
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================
+     LOGOUT
+     ĐĂNG XUẤT
+     ======================================================== -->
+
+<section class="logout-section">
+
+    <!-- Customer logout changes authentication state,
+         therefore it must use POST with CSRF protection.
+         Logout customer làm thay đổi trạng thái đăng nhập,
+         vì vậy phải dùng POST kèm CSRF. -->
+    <form
+        method="post"
+        action="{% url 'customer_portal:customer_logout' %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="secondary-dark-btn"
+        >
+            Logout
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

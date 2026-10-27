@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Online Checkout Invoice
+        </h2>
+
+        <p class="text-muted mb-0">
+            Invoice for Customer Portal booking checkout.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <!-- Start another online checkout. -->
+        <!-- Thực hiện một Online Checkout khác. -->
+        <a
+            href="{% url 'online_checkout' %}"
+            class="btn btn-outline-success"
+        >
+            <i class="bi bi-cash-stack"></i>
+            Online Checkout
+        </a>
+
+        <a
+            href="{% url 'checkout_list' %}"
+            class="btn btn-outline-primary"
+        >
+            <i class="bi bi-clock-history"></i>
+            Checkout History
+        </a>
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+        </a>
+
+        <!-- Print the current invoice using the browser. -->
+        <!-- In hóa đơn hiện tại bằng trình duyệt. -->
+        <button
+            type="button"
+            onclick="window.print()"
+            class="btn btn-dark"
+        >
+            <i class="bi bi-printer"></i>
+            Print Invoice
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     INVOICE
+     HÓA ĐƠN
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body p-4">
+
+        <div class="text-center mb-4">
+
+            <h3 class="fw-bold">
+                Hotel Face Check-in System
+            </h3>
+
+            <p class="text-muted mb-0">
+                Online Checkout Invoice
+            </p>
+
+        </div>
+
+        <hr>
+
+
+        <!-- =================================================
+             CUSTOMER + BOOKING INFORMATION
+             THÔNG TIN KHÁCH + BOOKING
+             ================================================= -->
+
+        <div class="row mb-4">
+
+            <div class="col-md-6">
+
+                <h5>
+                    Customer Information
+                </h5>
+
+                <p class="mb-1">
+                    <strong>Full Name:</strong>
+                    {{ booking.full_name }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Email:</strong>
+                    {{ booking.email }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Phone:</strong>
+                    {{ booking.phone }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Identity Number:</strong>
+
+                    {% if booking.identity_number %}
+                        {{ booking.identity_number }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Address:</strong>
+
+                    {% if booking.address %}
+                        {{ booking.address }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5>
+                    Booking Information
+                </h5>
+
+                <p class="mb-1">
+                    <strong>Room:</strong>
+                    {{ booking.room.room_number }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Room Type:</strong>
+                    {{ booking.room.room_type.name }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Check-in:</strong>
+                    {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Scheduled Check-out:</strong>
+                    {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Nights:</strong>
+                    {{ booking.get_number_of_nights }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Booking Status:</strong>
+
+                    <span class="badge bg-secondary">
+                        {{ booking.get_status_display }}
+                    </span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+
+        <!-- =================================================
+             CHECKOUT INFORMATION
+             THÔNG TIN CHECKOUT
+             ================================================= -->
+
+        <div class="row mb-4">
+
+            <div class="col-md-6">
+
+                <h5>
+                    Checkout Information
+                </h5>
+
+                <p class="mb-1">
+                    <strong>Actual Checkout Time:</strong>
+                    {{ online_checkout.check_out_time|date:"Y-m-d H:i" }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Processed By:</strong>
+
+                    {% if online_checkout.staff %}
+                        {{ online_checkout.staff.username }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <h5>
+                    Amount
+                </h5>
+
+                <div class="border rounded p-3 bg-light">
+
+                    <p class="mb-1">
+                        <strong>Final Amount:</strong>
+                    </p>
+
+                    <h3 class="mb-0">
+                        {{ online_checkout.final_amount|floatformat:2 }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+
+        <!-- =================================================
+             PAYMENT INFORMATION
+             THÔNG TIN THANH TOÁN
+             ================================================= -->
+
+        <div class="row mb-4">
+
+            <div class="col-md-12">
+
+                <h5>
+                    Payment Information
+                </h5>
+
+                {% if online_payment %}
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <p class="mb-1">
+                                <strong>Payment Method:</strong>
+                                {{ online_payment.get_payment_method_display }}
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <p class="mb-1">
+                                <strong>Payment Status:</strong>
+
+                                {% if online_payment.status == 'paid' %}
+
+                                    <span class="badge bg-success">
+                                        {{ online_payment.get_status_display }}
+                                    </span>
+
+                                {% elif online_payment.status == 'unpaid' %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        {{ online_payment.get_status_display }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        {{ online_payment.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <p class="mb-1">
+                                <strong>Payment Date:</strong>
+                                {{ online_payment.payment_date|date:"Y-m-d H:i" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- This should normally never happen after a successful checkout. -->
+                    <!-- Trường hợp này bình thường không xảy ra sau checkout thành công. -->
+                    <div class="alert alert-warning mb-0">
+                        Payment record was not found.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <hr>
+
+
+        <!-- =================================================
+             FOOTER
+             PHẦN CUỐI HÓA ĐƠN
+             ================================================= -->
+
+        <div class="text-center text-muted">
+
+            <p class="mb-0">
+                Thank you for staying with us.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

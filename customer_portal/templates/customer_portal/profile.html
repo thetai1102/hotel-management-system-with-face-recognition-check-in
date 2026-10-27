@@ -1,0 +1,323 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}My Profile - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     CUSTOMER PROFILE PAGE
+     TRANG HỒ SƠ KHÁCH HÀNG
+     ======================================================== -->
+
+<section class="auth-page">
+
+    <div class="auth-card wide-card">
+
+        <p class="eyebrow">
+            Guest Profile
+        </p>
+
+        <h1>
+            My Personal Information
+        </h1>
+
+        <p class="auth-intro">
+            Save your personal details once.
+            These details can be reused automatically
+            when you make future room bookings.
+        </p>
+
+
+        <!-- ====================================================
+             DJANGO MESSAGES
+             THÔNG BÁO DJANGO
+             ==================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- ====================================================
+             LOGIN EMAIL
+             EMAIL ĐĂNG NHẬP
+             ==================================================== -->
+
+        <div class="message-box">
+
+            <strong>Login Email:</strong>
+
+            {% if request.user.email %}
+                {{ request.user.email }}
+            {% else %}
+                -
+            {% endif %}
+
+            <br>
+
+            <small>
+                The login email is managed by your account
+                and is not changed from this profile form.
+            </small>
+
+        </div>
+
+
+        <!-- ====================================================
+             PROFILE FORM
+             FORM HỒ SƠ
+             ==================================================== -->
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="luxury-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors.
+                 Hiển thị lỗi validation chung của form. -->
+            {% if form.non_field_errors %}
+
+                <div class="message-box">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 FULL NAME
+                 HỌ TÊN
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.full_name.id_for_label }}">
+                    Full name
+                </label>
+
+                {{ form.full_name }}
+
+                {% if form.full_name.errors %}
+                    {{ form.full_name.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 PHONE
+                 SỐ ĐIỆN THOẠI
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.phone.id_for_label }}">
+                    Phone number
+                </label>
+
+                {{ form.phone }}
+
+                {% if form.phone.errors %}
+                    {{ form.phone.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 IDENTITY NUMBER
+                 SỐ GIẤY TỜ TÙY THÂN
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.identity_number.id_for_label }}">
+                    Identity number
+                </label>
+
+                {{ form.identity_number }}
+
+                {% if form.identity_number.errors %}
+                    {{ form.identity_number.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 ADDRESS
+                 ĐỊA CHỈ
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.address.id_for_label }}">
+                    Address
+                </label>
+
+                {{ form.address }}
+
+                {% if form.address.errors %}
+                    {{ form.address.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 IDENTITY DOCUMENT IMAGE
+                 ẢNH GIẤY TỜ TÙY THÂN
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.id_document_image.id_for_label }}">
+                    Identity document image
+                </label>
+
+
+                <!-- Show the currently stored document image.
+                     Hiển thị ảnh giấy tờ hiện đang lưu. -->
+                {% if request.user.customer_profile.id_document_image %}
+
+                    <div style="margin-bottom: 15px;">
+
+                        <p>
+                            Current identity document:
+                        </p>
+
+                        <img
+                            src="{{ request.user.customer_profile.id_document_image.url }}"
+                            alt="Current identity document"
+                            style="
+                                max-width: 100%;
+                                max-height: 300px;
+                                border-radius: 8px;
+                            "
+                        >
+
+                    </div>
+
+                {% endif %}
+
+
+                {{ form.id_document_image }}
+
+                {% if form.id_document_image.errors %}
+                    {{ form.id_document_image.errors }}
+                {% endif %}
+
+                <small>
+                    Upload a new image only if you want to replace
+                    the document currently stored in your profile.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 SELFIE IMAGE
+                 ẢNH SELFIE
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.selfie_image.id_for_label }}">
+                    Selfie image
+                </label>
+
+
+                <!-- Show the currently stored reference selfie.
+                     Hiển thị selfie tham chiếu hiện đang lưu. -->
+                {% if request.user.customer_profile.selfie_image %}
+
+                    <div style="margin-bottom: 15px;">
+
+                        <p>
+                            Current selfie:
+                        </p>
+
+                        <img
+                            src="{{ request.user.customer_profile.selfie_image.url }}"
+                            alt="Current customer selfie"
+                            style="
+                                width: 180px;
+                                height: 180px;
+                                object-fit: cover;
+                                border-radius: 8px;
+                            "
+                        >
+
+                    </div>
+
+                {% endif %}
+
+
+                {{ form.selfie_image }}
+
+                {% if form.selfie_image.errors %}
+                    {{ form.selfie_image.errors }}
+                {% endif %}
+
+                <small>
+                    Use a clear front-facing selfie.
+                    This image may be reused as the reference face
+                    for future bookings and Online Face Check-in.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 SAVE PROFILE
+                 LƯU HỒ SƠ
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="form-submit-btn"
+            >
+                Save Profile
+            </button>
+
+        </form>
+
+
+        <!-- ====================================================
+             NAVIGATION
+             ĐIỀU HƯỚNG
+             ==================================================== -->
+
+        <p class="auth-bottom-text">
+
+            <a href="{% url 'customer_portal:customer_dashboard' %}">
+                Back to Dashboard
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

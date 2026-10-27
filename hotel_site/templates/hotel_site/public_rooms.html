@@ -1,0 +1,147 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}
+Rooms - Maison Lumière
+{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HERO
+     PHẦN GIỚI THIỆU TRANG
+     ======================================================== -->
+
+<section class="page-hero">
+
+    <p class="eyebrow">
+        Rooms and Suites
+    </p>
+
+    <h1>
+        Discover your next stay.
+    </h1>
+
+    <p>
+        Browse our hotel rooms and log in as a guest
+        to select your stay dates and submit a booking request.
+    </p>
+
+</section>
+
+
+<!-- ========================================================
+     AVAILABILITY INFORMATION
+     THÔNG TIN VỀ AVAILABILITY
+     ======================================================== -->
+
+<section class="room-list-section">
+
+    <!-- Current Room.status is not future availability.
+         Room.status hiện tại không phải availability cho ngày tương lai. -->
+    <div class="alert alert-info mb-4">
+
+        <strong>Booking availability:</strong>
+
+        A room's status below shows its current operational state.
+        Availability for your selected stay dates is checked
+        during the booking process.
+
+    </div>
+
+
+    {% if rooms %}
+
+        <div class="room-list">
+
+            {% for room in rooms %}
+
+                <div class="room-list-card">
+
+                    <div class="room-image-placeholder">
+
+                        <span>
+                            Room {{ room.room_number }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="room-list-content">
+
+                        <p class="eyebrow">
+                            {{ room.room_type.name }}
+                        </p>
+
+                        <h2>
+                            Room {{ room.room_number }}
+                        </h2>
+
+                        <p>
+                            Floor:
+                            {{ room.floor }}
+                        </p>
+
+                        <p>
+                            Capacity:
+                            {{ room.room_type.capacity }}
+                        </p>
+
+                        <p>
+                            Price:
+                            <strong>
+                                {{ room.room_type.price_per_night }}
+                                / night
+                            </strong>
+                        </p>
+
+                        <!-- Display the current operational status only.
+                             Chỉ hiển thị trạng thái vận hành hiện tại. -->
+                        <p>
+                            Current Status:
+                            <strong>
+                                {{ room.get_status_display }}
+                            </strong>
+                        </p>
+
+
+                        <div class="room-actions">
+
+                            <!-- The real date-overlap check happens
+                                 inside the Customer Portal booking flow.
+                                 Việc kiểm tra booking overlap theo ngày
+                                 thực hiện trong Customer Portal. -->
+                            <a
+                                href="{% url 'customer_portal:customer_login' %}"
+                                class="primary-btn"
+                            >
+                                Login to Book
+                            </a>
+
+                            <a
+                                href="{% url 'customer_portal:customer_register' %}"
+                                class="secondary-dark-btn"
+                            >
+                                Create Account
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="empty-text">
+            No rooms are currently displayed.
+        </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

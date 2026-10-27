@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>
+        {{ title }}
+    </h2>
+
+    <a
+        href="{% url 'customer_list' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+
+<!-- ========================================================
+     CUSTOMER FORM
+     FORM KHÁCH HÀNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors.
+                 Hiển thị lỗi validation chung của form. -->
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row">
+
+
+                <!-- =========================================
+                     FULL NAME
+                     HỌ TÊN
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.full_name.id_for_label }}"
+                        class="form-label"
+                    >
+                        Full Name
+                    </label>
+
+                    {{ form.full_name }}
+
+                    {% if form.full_name.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.full_name.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     PHONE
+                     SỐ ĐIỆN THOẠI
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.phone.id_for_label }}"
+                        class="form-label"
+                    >
+                        Phone
+                    </label>
+
+                    {{ form.phone }}
+
+                    {% if form.phone.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.phone.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     EMAIL
+                     EMAIL
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.email.id_for_label }}"
+                        class="form-label"
+                    >
+                        Email
+                    </label>
+
+                    {{ form.email }}
+
+                    {% if form.email.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.email.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     ID CARD / PASSPORT
+                     CCCD / HỘ CHIẾU
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.id_card_number.id_for_label }}"
+                        class="form-label"
+                    >
+                        ID Card / Passport
+                    </label>
+
+                    {{ form.id_card_number }}
+
+                    {% if form.id_card_number.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.id_card_number.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     ADDRESS
+                     ĐỊA CHỈ
+                     ========================================= -->
+
+                <div class="col-md-12 mb-3">
+
+                    <label
+                        for="{{ form.address.id_for_label }}"
+                        class="form-label"
+                    >
+                        Address
+                    </label>
+
+                    {{ form.address }}
+
+                    {% if form.address.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.address.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     IDENTITY DOCUMENT IMAGE
+                     ẢNH GIẤY TỜ TÙY THÂN
+                     ========================================= -->
+
+                <div class="col-md-12 mb-3">
+
+                    <label
+                        for="{{ form.id_document_image.id_for_label }}"
+                        class="form-label"
+                    >
+                        Identity Document Image
+                    </label>
+
+                    {{ form.id_document_image }}
+
+                    {% if form.id_document_image.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.id_document_image.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <div class="form-text">
+                        Upload an ID card or passport image when available.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     SELFIE IMAGE
+                     ẢNH SELFIE
+                     ========================================= -->
+
+                <div class="col-md-12 mb-3">
+
+                    <label
+                        for="{{ form.selfie_image.id_for_label }}"
+                        class="form-label"
+                    >
+                        Selfie Image
+                    </label>
+
+                    {{ form.selfie_image }}
+
+                    {% if form.selfie_image.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.selfie_image.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <!-- Selfie is the preferred reference image.
+                         Selfie là ảnh tham chiếu ưu tiên. -->
+                    <div class="form-text">
+                        Upload a clear front-facing JPG, JPEG, or PNG image.
+                        This is the preferred reference image for
+                        Face Recognition Check-in.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     LEGACY FACE IMAGE
+                     ẢNH KHUÔN MẶT LEGACY
+                     ========================================= -->
+
+                <div class="col-md-12 mb-3">
+
+                    <label
+                        for="{{ form.face_image.id_for_label }}"
+                        class="form-label"
+                    >
+                        Legacy Face Image
+                    </label>
+
+                    {{ form.face_image }}
+
+                    {% if form.face_image.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.face_image.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <!-- This field is kept only for compatibility.
+                         Field này chỉ giữ lại để tương thích code cũ. -->
+                    <div class="form-text">
+                        Optional legacy reference image.
+                        The system uses the Selfie Image first and
+                        falls back to this image only when no selfie exists.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 CÁC NÚT THAO TÁC
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-save"></i>
+                Save
+            </button>
+
+            <a
+                href="{% url 'customer_list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

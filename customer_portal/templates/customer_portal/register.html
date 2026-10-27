@@ -1,0 +1,234 @@
+{% extends "hotel_site/base.html" %}
+
+{% block title %}Guest Register - Maison Lumière{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================
+     CUSTOMER REGISTRATION
+     ĐĂNG KÝ TÀI KHOẢN KHÁCH HÀNG
+     ======================================================== -->
+
+<section class="auth-page">
+
+    <div class="auth-card">
+
+        <p class="eyebrow">
+            Guest Account
+        </p>
+
+        <h1>
+            Create Your Account
+        </h1>
+
+        <p class="auth-intro">
+            Create a guest account to make room bookings,
+            manage your personal information, and track your reservations.
+            After registration, you can add your identity document
+            and selfie from your profile.
+        </p>
+
+
+        <!-- ====================================================
+             DJANGO MESSAGES
+             THÔNG BÁO DJANGO
+             ==================================================== -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message-box">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- ====================================================
+             REGISTRATION FORM
+             FORM ĐĂNG KÝ
+             ==================================================== -->
+
+        <form
+            method="post"
+            class="luxury-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors.
+                 Hiển thị lỗi validation chung của form. -->
+            {% if form.non_field_errors %}
+
+                <div class="message-box">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 FULL NAME
+                 HỌ TÊN
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.full_name.id_for_label }}">
+                    Full name
+                </label>
+
+                {{ form.full_name }}
+
+                {% if form.full_name.errors %}
+                    {{ form.full_name.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 EMAIL
+                 EMAIL
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.email.id_for_label }}">
+                    Email
+                </label>
+
+                {{ form.email }}
+
+                {% if form.email.errors %}
+                    {{ form.email.errors }}
+                {% endif %}
+
+                <small>
+                    This email will be used to log in to your guest account.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PHONE
+                 SỐ ĐIỆN THOẠI
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.phone.id_for_label }}">
+                    Phone number
+                </label>
+
+                {{ form.phone }}
+
+                {% if form.phone.errors %}
+                    {{ form.phone.errors }}
+                {% endif %}
+
+                <small>
+                    Your phone number can also be used to log in.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD
+                 MẬT KHẨU
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.password1.id_for_label }}">
+                    Password
+                </label>
+
+                {{ form.password1 }}
+
+                {% if form.password1.errors %}
+                    {{ form.password1.errors }}
+                {% endif %}
+
+                <!-- Display Django password requirements.
+                     Hiển thị yêu cầu mật khẩu của Django. -->
+                {% if form.password1.help_text %}
+
+                    <div class="form-help-text">
+                        {{ form.password1.help_text|safe }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 PASSWORD CONFIRMATION
+                 XÁC NHẬN MẬT KHẨU
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="{{ form.password2.id_for_label }}">
+                    Confirm password
+                </label>
+
+                {{ form.password2 }}
+
+                {% if form.password2.errors %}
+                    {{ form.password2.errors }}
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBMIT
+                 GỬI FORM
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="form-submit-btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <!-- ====================================================
+             LOGIN LINK
+             LIÊN KẾT ĐĂNG NHẬP
+             ==================================================== -->
+
+        <p class="auth-bottom-text">
+
+            Already have an account?
+
+            <a href="{% url 'customer_portal:customer_login' %}">
+                Login here
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

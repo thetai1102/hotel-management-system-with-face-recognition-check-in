@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     PAGE HEADER
+     TIÊU ĐỀ TRANG
+     ======================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>
+        {{ title }}
+    </h2>
+
+    <a
+        href="{% url 'room_type_list' %}"
+        class="btn btn-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</div>
+
+
+<!-- ========================================================
+     ROOM TYPE FORM
+     FORM LOẠI PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard">
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- Display form-wide validation errors.
+                 Hiển thị lỗi validation chung của form. -->
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row">
+
+
+                <!-- =========================================
+                     ROOM TYPE NAME
+                     TÊN LOẠI PHÒNG
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.name.id_for_label }}"
+                        class="form-label"
+                    >
+                        Room Type Name
+                    </label>
+
+                    {{ form.name }}
+
+                    {% if form.name.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.name.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =========================================
+                     PRICE PER NIGHT
+                     GIÁ MỖI ĐÊM
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.price_per_night.id_for_label }}"
+                        class="form-label"
+                    >
+                        Price Per Night
+                    </label>
+
+                    {{ form.price_per_night }}
+
+                    {% if form.price_per_night.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.price_per_night.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <!-- Current room rate is used for new or materially
+                         changed bookings only.
+                         Giá phòng hiện tại chỉ được dùng cho booking mới
+                         hoặc booking thay đổi thông tin tính giá. -->
+                    <div class="form-text">
+                        Must be greater than 0.
+                        Existing bookings keep their stored total price
+                        unless pricing-related booking data changes.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     CAPACITY
+                     SỨC CHỨA
+                     ========================================= -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="{{ form.capacity.id_for_label }}"
+                        class="form-label"
+                    >
+                        Capacity
+                    </label>
+
+                    {{ form.capacity }}
+
+                    {% if form.capacity.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.capacity.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <div class="form-text">
+                        Minimum capacity is 1 guest.
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     DESCRIPTION
+                     MÔ TẢ
+                     ========================================= -->
+
+                <div class="col-md-12 mb-3">
+
+                    <label
+                        for="{{ form.description.id_for_label }}"
+                        class="form-label"
+                    >
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ form.description.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 CÁC NÚT THAO TÁC
+                 ================================================= -->
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-save"></i>
+                Save
+            </button>
+
+            <a
+                href="{% url 'room_type_list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

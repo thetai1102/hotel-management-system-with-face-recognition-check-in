@@ -1,0 +1,726 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ========================================================
+     DASHBOARD TITLE
+     TIÊU ĐỀ DASHBOARD
+     ======================================================== -->
+
+<h2 class="mb-4">
+    Dashboard
+</h2>
+
+
+<!-- ========================================================
+     MAIN STATISTICS
+     THỐNG KÊ CHÍNH
+     ======================================================== -->
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-primary text-white">
+            <div class="card-body">
+                <h5>Total Customers</h5>
+                <h2>{{ total_customers }}</h2>
+                <i class="bi bi-people fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-success text-white">
+            <div class="card-body">
+
+                <!-- This is the room's current operational state,
+                     not guaranteed future-date availability. -->
+                <!-- Đây là trạng thái vận hành hiện tại của phòng,
+                     không phải availability chắc chắn cho ngày tương lai. -->
+
+                <h5>Currently Available</h5>
+                <h2>{{ available_rooms }}</h2>
+                <i class="bi bi-door-open fs-1"></i>
+
+                <small>
+                    Current operational status
+                </small>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-warning text-dark">
+            <div class="card-body">
+
+                <!-- Current workflow excludes historical legacy
+                     public Booking records. -->
+                <!-- Workflow hiện tại không tính các public Booking
+                     legacy chỉ còn dùng làm lịch sử. -->
+
+                <h5>Current Workflow Bookings</h5>
+                <h2>{{ total_bookings }}</h2>
+                <i class="bi bi-calendar-check fs-1"></i>
+
+                <small>
+                    Staff + Customer Portal
+                </small>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-danger text-white">
+            <div class="card-body">
+                <h5>Occupied Rooms</h5>
+                <h2>{{ occupied_rooms }}</h2>
+                <i class="bi bi-house-lock fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     ROOM OPERATIONAL STATUS
+     TRẠNG THÁI VẬN HÀNH PHÒNG
+     ======================================================== -->
+
+<div class="card card-dashboard mt-4">
+
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            Current Room Operational Status
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <!-- Future room availability is determined by
+             booking overlap for the selected stay period. -->
+        <!-- Availability tương lai được xác định bằng
+             booking overlap theo khoảng lưu trú được chọn. -->
+
+        <p class="text-muted">
+            These values describe the current operational state of each room.
+            Future availability is checked against booking dates.
+        </p>
+
+        <div class="row g-3 text-center">
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Total
+                    </div>
+
+                    <strong class="fs-4">
+                        {{ total_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Available
+                    </div>
+
+                    <strong class="fs-4 text-success">
+                        {{ available_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Reserved
+                    </div>
+
+                    <strong class="fs-4 text-primary">
+                        {{ reserved_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Occupied
+                    </div>
+
+                    <strong class="fs-4 text-danger">
+                        {{ occupied_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Cleaning
+                    </div>
+
+                    <strong class="fs-4 text-warning">
+                        {{ cleaning_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-6 col-md">
+                <div class="border rounded p-3">
+                    <div class="text-muted">
+                        Maintenance
+                    </div>
+
+                    <strong class="fs-4 text-secondary">
+                        {{ maintenance_rooms }}
+                    </strong>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     CURRENT BOOKING STATISTICS
+     THỐNG KÊ BOOKING CỦA WORKFLOW HIỆN TẠI
+     ======================================================== -->
+
+<div class="row g-4 mt-1">
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-dark text-white">
+            <div class="card-body">
+                <h5>Staff Bookings</h5>
+                <h2>{{ staff_bookings_count }}</h2>
+                <i class="bi bi-person-workspace fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-info text-white">
+            <div class="card-body">
+                <h5>Customer Portal Bookings</h5>
+                <h2>{{ online_bookings_count }}</h2>
+                <i class="bi bi-globe2 fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-secondary text-white">
+            <div class="card-body">
+                <h5>Pending Portal Requests</h5>
+                <h2>{{ pending_online_bookings }}</h2>
+                <i class="bi bi-hourglass-split fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-dashboard bg-success text-white">
+            <div class="card-body">
+                <h5>Checked-in Portal</h5>
+                <h2>{{ checked_in_online_bookings }}</h2>
+                <i class="bi bi-person-check fs-1"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     LEGACY HISTORY NOTICE
+     THÔNG TIN LỊCH SỬ LEGACY
+     ======================================================== -->
+
+{% if legacy_online_bookings_count %}
+
+    <div class="alert alert-secondary mt-4 mb-0">
+
+        <strong>
+            Historical legacy booking records:
+            {{ legacy_online_bookings_count }}
+        </strong>
+
+        <div class="small mt-1">
+
+            <!-- These records belong to the removed public
+                 Booking workflow and are kept only as history. -->
+            <!-- Các record này thuộc public Booking workflow cũ
+                 đã bị loại bỏ và chỉ được giữ làm lịch sử. -->
+
+            They belong to the previous public booking workflow
+            and are not part of the current Customer Portal booking flow.
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<div class="row mt-4">
+
+    <!-- ====================================================
+         RECENT BOOKINGS
+         BOOKING GẦN ĐÂY
+         ==================================================== -->
+
+    <div class="col-md-8">
+
+        <!-- =================================================
+             RECENT CUSTOMER PORTAL BOOKINGS
+             CUSTOMER PORTAL BOOKING GẦN ĐÂY
+             ================================================= -->
+
+        <div class="card card-dashboard mb-4">
+
+            <div
+                class="card-header bg-white
+                       d-flex justify-content-between
+                       align-items-center"
+            >
+
+                <h5 class="mb-0">
+                    Recent Customer Portal Bookings
+                </h5>
+
+                <a
+                    href="{% url 'bookings:online_booking_requests' %}"
+                    class="btn btn-sm btn-outline-primary"
+                >
+                    View All
+                </a>
+
+            </div>
+
+            <div class="card-body">
+
+                {% if recent_online_bookings %}
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th class="text-end">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for booking in recent_online_bookings %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ booking.full_name }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.room.room_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.check_in_at|date:"Y-m-d H:i" }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.check_out_at|date:"Y-m-d H:i" }}
+                                        </td>
+
+                                        <td>
+
+                                            {% if booking.status == 'pending' %}
+
+                                                <span class="badge bg-warning text-dark">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'confirmed' %}
+
+                                                <span class="badge bg-primary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'checked_in' %}
+
+                                                <span class="badge bg-success">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'checked_out' %}
+
+                                                <span class="badge bg-secondary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'cancelled' %}
+
+                                                <span class="badge bg-danger">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-secondary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="text-end">
+
+                                            <a
+                                                href="{% url 'bookings:online_booking_detail' booking.id %}"
+                                                class="btn btn-sm btn-info text-white"
+                                            >
+                                                View
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        No Customer Portal bookings yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RECENT STAFF BOOKINGS
+             BOOKING STAFF GẦN ĐÂY
+             ================================================= -->
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    Recent Staff Bookings
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                {% if recent_bookings %}
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for booking in recent_bookings %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ booking.customer.full_name }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.room.room_number }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.check_in_date }}
+                                        </td>
+
+                                        <td>
+                                            {{ booking.check_out_date }}
+                                        </td>
+
+                                        <td>
+
+                                            <!-- Display the human-readable status.
+                                                 Hiển thị trạng thái dễ đọc. -->
+
+                                            {% if booking.status == 'pending_confirmation' %}
+
+                                                <span class="badge bg-warning text-dark">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'confirmed' %}
+
+                                                <span class="badge bg-primary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'checked_in' %}
+
+                                                <span class="badge bg-success">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'checked_out' %}
+
+                                                <span class="badge bg-secondary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% elif booking.status == 'cancelled' %}
+
+                                                <span class="badge bg-danger">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-secondary">
+                                                    {{ booking.get_status_display }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        No staff bookings yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         STATUS + QUICK ACTIONS
+         TRẠNG THÁI + THAO TÁC NHANH
+         ==================================================== -->
+
+    <div class="col-md-4">
+
+        <!-- =================================================
+             CUSTOMER PORTAL BOOKING STATUS
+             TRẠNG THÁI CUSTOMER PORTAL BOOKING
+             ================================================= -->
+
+        <div class="card card-dashboard mb-4">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    Customer Portal Booking Status
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>Pending Requests</span>
+
+                    <strong>
+                        {{ pending_online_bookings }}
+                    </strong>
+                </div>
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>Confirmed</span>
+
+                    <strong>
+                        {{ confirmed_online_bookings }}
+                    </strong>
+                </div>
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>Checked In</span>
+
+                    <strong>
+                        {{ checked_in_online_bookings }}
+                    </strong>
+                </div>
+
+                <div
+                    class="d-flex justify-content-between
+                           border-bottom py-2"
+                >
+                    <span>Checked Out</span>
+
+                    <strong>
+                        {{ checked_out_online_bookings }}
+                    </strong>
+                </div>
+
+                <div
+                    class="d-flex justify-content-between py-2"
+                >
+                    <span>Cancelled</span>
+
+                    <strong>
+                        {{ cancelled_online_bookings }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+             THAO TÁC NHANH
+             ================================================= -->
+
+        <div class="card card-dashboard">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    Quick Actions
+                </h5>
+            </div>
+
+            <div class="card-body d-grid gap-2">
+
+                <a
+                    href="{% url 'customer_create' %}"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-person-plus"></i>
+                    Add Customer
+                </a>
+
+                <a
+                    href="{% url 'bookings:booking_create' %}"
+                    class="btn btn-success"
+                >
+                    <i class="bi bi-calendar-plus"></i>
+                    New Staff Booking
+                </a>
+
+                <a
+                    href="{% url 'bookings:online_booking_requests' %}"
+                    class="btn btn-info text-white"
+                >
+                    <i class="bi bi-inbox"></i>
+                    Customer Portal Requests
+                </a>
+
+                <a
+                    href="{% url 'face_checkin' %}"
+                    class="btn btn-warning"
+                >
+                    <i class="bi bi-camera"></i>
+                    Staff Booking Face Check-in
+                </a>
+
+                <a
+                    href="{% url 'online_face_checkin' %}"
+                    class="btn btn-info text-white"
+                >
+                    <i class="bi bi-person-bounding-box"></i>
+                    Customer Portal Face Check-in
+                </a>
+
+                <a
+                    href="{% url 'checkout_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    <i class="bi bi-cash-stack"></i>
+                    Checkout History
+                </a>
+
+                <a
+                    href="{% url 'online_checkout' %}"
+                    class="btn btn-secondary"
+                >
+                    <i class="bi bi-credit-card"></i>
+                    Customer Portal Checkout
+                </a>
+
+                <!-- Only superusers can access Django Admin.
+                     Chỉ superuser mới được truy cập Django Admin. -->
+
+                {% if user.is_superuser %}
+
+                    <a
+                        href="/admin/"
+                        class="btn btn-dark"
+                    >
+                        <i class="bi bi-gear"></i>
+                        Admin Panel
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
